@@ -1,0 +1,328 @@
+.auth-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.auth-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.auth-label-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-info-icon {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+}
+
+.auth-help-text {
+  font-size: 12px;
+  color: #667085;
+}
+
+.auth-input {
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.auth-input.invalid {
+  border-color: #b42318;
+  background: #fff1f0;
+}
+
+.auth-error-text {
+  font-size: 12px;
+  color: #b42318;
+}
+
+.auth-button {
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.auth-alert.error {
+  background: #ffe4e4;
+  color: #b42318;
+}
+
+.auth-alert.success {
+  background: #e6f9ed;
+  color: #027a48;
+}
+
+.auth-links {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.auth-links button {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Stepper Styles */
+.register-stepper-card {
+  max-width: 700px !important;
+}
+
+.stepper-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepper-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e4e7ec;
+  color: #667085;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.stepper-circle.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.stepper-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #667085;
+  text-align: center;
+}
+
+.stepper-line {
+  width: 60px;
+  height: 2px;
+  background: #e4e7ec;
+  margin-bottom: 24px;
+}
+
+/* Plan Cards */
+.plans-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.plan-card {
+  border: 2px solid #e4e7ec;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.plan-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+.plan-card.selected {
+  border-color: #2563eb;
+  background: #f5f8ff;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+}
+
+.plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.plan-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #101828;
+}
+
+.plan-price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.price-free {
+  font-size: 18px;
+  font-weight: 700;
+  color: #027a48;
+}
+
+.price-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.price-period {
+  font-size: 12px;
+  color: #667085;
+}
+
+.plan-description {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #667085;
+  line-height: 1.5;
+}
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plan-features li {
+  font-size: 14px;
+  color: #344054;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plan-loading {
+  text-align: center;
+  padding: 40px;
+  color: #667085;
+}
+
+/* Stepper Actions */
+.stepper-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.stepper-actions button {
+  flex: 1;
+}
+
+.auth-button.secondary {
+  background: #ffffff;
+  border: 1px solid #d0d5dd;
+  color: #344054;
+}
+
+.auth-button.secondary:hover:not(:disabled) {
+  background: #f9fafb;
+}
+
+.auth-status {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.auth-status.error {
+  background: #ffe4e4;
+  color: #b42318;
+}
+
+.auth-status.success {
+  background: #e6f9ed;
+  color: #027a48;
+}
+
+.auth-error-text.center {
+  text-align: center;
+  display: block;
+  margin-top: 8px;
+}
+
+.auth-footer-text {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.auth-link {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (min-width: 640px) {
+  .plans-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .plans-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

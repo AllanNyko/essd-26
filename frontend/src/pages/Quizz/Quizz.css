@@ -1,0 +1,492 @@
+/* Mobile First: Container Principal */
+.quizz-page {
+  min-height: 100vh;
+  padding-top: 56px;
+}
+
+/* Hero Section */
+.quizz-hero {
+  position: relative;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.floating-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.float-icon {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.1;
+  animation: float-random 15s infinite ease-in-out;
+  pointer-events: none;
+}
+
+.float-icon:nth-child(1) {
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.float-icon:nth-child(2) {
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.float-icon:nth-child(3) {
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+.float-icon:nth-child(4) {
+  top: 30%;
+  right: 25%;
+  animation-delay: 6s;
+}
+
+@keyframes float-random {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(20px, -20px) rotate(90deg); }
+  50% { transform: translate(-15px, 15px) rotate(180deg); }
+  75% { transform: translate(15px, 10px) rotate(270deg); }
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 20px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.badge-icon {
+  font-size: 18px;
+}
+
+.hero-content h1 {
+  font-size: 42px;
+  font-weight: 900;
+  margin: 0 0 16px 0;
+  line-height: 1.2;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hero-content p {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Achievements Grid */
+.achievements-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.achievement-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.achievement-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.achievement-value {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.achievement-label {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Game Modes Section */
+.game-modes-section {
+  padding: 48px 24px;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section-header h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 12px 0;
+}
+
+.section-header p {
+  font-size: 16px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Game Modes Grid */
+.game-modes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Game Mode Card */
+.game-mode-card {
+  position: relative;
+  min-height: 320px;
+  border-radius: 24px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.game-mode-card:active {
+  transform: scale(0.98);
+}
+
+.mode-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  transition: background 0.3s ease;
+}
+
+.game-mode-card:hover .mode-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.mode-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #ffffff;
+}
+
+.mode-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  animation: bounce-subtle 3s ease-in-out infinite;
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.mode-name {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mode-description {
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+  opacity: 0.95;
+}
+
+.mode-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 11px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.play-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.game-mode-card:hover .play-button {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.arrow {
+  font-size: 20px;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.game-mode-card:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* Info Section */
+.info-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  padding: 24px 24px 48px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.info-card {
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 2px solid;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.info-icon {
+  font-size: 56px;
+  margin-bottom: 20px;
+}
+
+.info-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.info-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .quizz-hero {
+    padding: 64px 32px;
+  }
+
+  .hero-content h1 {
+    font-size: 56px;
+  }
+
+  .hero-content p {
+    font-size: 18px;
+  }
+
+  .achievements-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .achievement-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px 16px;
+  }
+
+  .achievement-icon {
+    font-size: 40px;
+  }
+
+  .achievement-value {
+    font-size: 20px;
+  }
+
+  .achievement-label {
+    font-size: 12px;
+  }
+
+  .game-modes-section {
+    padding: 64px 32px;
+  }
+
+  .section-header h2 {
+    font-size: 40px;
+  }
+
+  .section-header p {
+    font-size: 18px;
+  }
+
+  .game-modes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  .game-mode-card {
+    min-height: 380px;
+  }
+
+  .mode-content {
+    padding: 40px 32px;
+  }
+
+  .info-section {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 32px 32px 64px 32px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .quizz-hero {
+    padding: 80px 48px;
+  }
+
+  .hero-content h1 {
+    font-size: 64px;
+  }
+
+  .game-modes-section {
+    padding: 80px 48px;
+  }
+
+  .section-header h2 {
+    font-size: 48px;
+  }
+
+  .game-mode-card {
+    min-height: 420px;
+  }
+
+  .game-mode-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.25);
+  }
+
+  .mode-icon {
+    font-size: 80px;
+  }
+
+  .mode-name {
+    font-size: 32px;
+  }
+
+  .mode-description {
+    font-size: 16px;
+  }
+
+  .info-section {
+    padding: 48px 48px 80px 48px;
+  }
+
+  .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+}

@@ -1,0 +1,26 @@
+/* Mobile First: Container Principal */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  position: relative;
+  flex: 1;
+  padding-bottom: 64px; /* Espaço para bottom nav */
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .app-content {
+    padding-bottom: 72px;
+  }
+}
+
+/* Desktop - remover padding quando bottom nav está oculta */
+@media (min-width: 1024px) {
+  .app-content {
+    padding-bottom: 0;
+  }
+}

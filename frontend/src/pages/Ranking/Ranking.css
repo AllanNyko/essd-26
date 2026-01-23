@@ -1,0 +1,286 @@
+/* Mobile First: Container Principal */
+.ranking-page {
+  min-height: 100vh;
+  padding-top: 56px;
+  padding-bottom: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Header */
+.ranking-header {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.ranking-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+}
+
+.ranking-header p {
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Card do usuário atual */
+.current-user-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  margin: 0 20px 32px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #667eea;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-info h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-info p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.user-position {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.position-hash {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.position-number {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+/* Ranking Section */
+.ranking-section {
+  padding: 0 20px;
+}
+
+.ranking-section h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+}
+
+/* Ranking List */
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1px solid;
+  border-radius: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ranking-item:active {
+  transform: scale(0.98);
+}
+
+.ranking-position-badge {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  flex-shrink: 0;
+}
+.ranking-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ranking-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ranking-info p {
+  font-size: 12px;
+  margin: 0;
+}
+
+.ranking-avatar-wrapper {
+  flex-shrink: 0;
+}
+
+.ranking-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.ranking-average {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.average-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.average-value {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Tablet */
+@media (min-width: 640px) {
+  .ranking-header {
+    padding: 32px 32px;
+  }
+
+  .ranking-header h1 {
+    font-size: 40px;
+  }
+
+  .current-user-card {
+    margin: 0 32px 40px 32px;
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .user-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .user-info h2 {
+    font-size: 24px;
+  }
+
+  .user-info p {
+    font-size: 15px;
+  }
+
+  .position-hash {
+    font-size: 28px;
+  }
+
+  .position-number {
+    font-size: 40px;
+  }
+
+  .ranking-section {
+    padding: 0 32px;
+  }
+
+  .ranking-section h3 {
+    font-size: 24px;
+    margin: 0 0 24px 0;
+  }
+
+  .ranking-list {
+    gap: 12px;
+  }
+
+  .ranking-item {
+    padding: 18px 20px;
+  }
+
+  .ranking-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .ranking-position-badge {
+    font-size: 16px;
+  }
+
+  .ranking-info h4 {
+    font-size: 18px;
+  }
+
+  .ranking-info p {
+    font-size: 13px;
+  }
+
+  .average-value {
+    font-size: 22px;
+  }
+
+  .average-label {
+    font-size: 12px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .ranking-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ranking-header {
+    padding: 48px 48px 40px 48px;
+  }
+
+  .current-user-card {
+    margin: 0 48px 48px 48px;
+    padding: 28px;
+    gap: 24px;
+  }
+
+  .current-user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .ranking-section {
+    padding: 0 48px;
+  }
+
+  .ranking-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}

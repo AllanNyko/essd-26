@@ -1,0 +1,200 @@
+.estatistica-page {
+  min-height: 100vh;
+  padding-top: 56px;
+  padding-bottom: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.estatistica-header {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.estatistica-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+}
+
+.estatistica-header p {
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.estatistica-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 0 20px;
+}
+
+.estatistica-card {
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 18px 16px;
+  background: #ffffff;
+}
+
+.estatistica-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.estatistica-card-header span {
+  font-size: 12px;
+}
+
+.estatistica-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.estatistica-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.metric-block {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 220px;
+}
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 800;
+  margin-top: 6px;
+}
+
+.metric-subjects {
+  font-size: 13px;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.estatistica-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(160px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.summary-item {
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 12px;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.summary-value {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.chart-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.line-chart {
+  display: block;
+}
+
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.estatistica-card h3 {
+  font-size: 18px;
+  margin: 0 0 6px 0;
+}
+
+.estatistica-card p {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .estatistica-header {
+    padding: 32px 32px;
+  }
+
+  .estatistica-header h1 {
+    font-size: 40px;
+  }
+
+  .estatistica-cards {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 0 32px;
+  }
+
+  .metric-value {
+    font-size: 26px;
+  }
+
+  .summary-value {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .estatistica-page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .estatistica-header {
+    padding: 48px 48px 40px 48px;
+  }
+
+  .estatistica-cards {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0 48px;
+  }
+}
