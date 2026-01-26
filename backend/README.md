@@ -9,6 +9,8 @@
 - Atualizar usuário: `PATCH /api/users/{id}`
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
+- Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2`
+- Responder quizz (jogo): `POST /api/quizzes/{id}/answer`
 - Listar matérias: `GET /api/subjects`
 - Cadastrar matéria: `POST /api/subjects`
 - Detalhar matéria: `GET /api/subjects/{id}`
@@ -163,6 +165,15 @@ Retorna array de matérias com `id` e `name`.
 {
 	"action": "validate", // ou "invalidate"
 	"user_id": 1
+}
+```
+
+### Responder quizz (jogo)
+```json
+{
+	"user_id": 1,
+	"selected_option": "Alternativa correta",
+	"timed_out": false
 }
 ```
 

@@ -57,6 +57,8 @@ Endpoints usados:
 - Validar quizz: `POST /quizzes/{id}/validate`
 - Listar notas: `GET /notes?user_id={id}`
 - Cadastrar nota: `POST /notes`
+- Próximo quizz (jogo): `GET /quizzes/play/next?subject_ids=1,2`
+- Responder quizz (jogo): `POST /quizzes/{id}/answer`
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.

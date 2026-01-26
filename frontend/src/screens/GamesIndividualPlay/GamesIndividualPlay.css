@@ -16,6 +16,41 @@
   gap: 16px;
 }
 
+.quiz-timer {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.quiz-timer-fill {
+  height: 100%;
+  background: #22c55e;
+  width: 100%;
+  transform-origin: left;
+  transition: transform 1s linear;
+}
+
+.quiz-timer-fill.resetting {
+  transition: none;
+}
+
+.quiz-timer-fill.safe {
+  background: #22c55e;
+}
+
+.quiz-timer-fill.warning {
+  background: #f59e0b;
+}
+
+.quiz-timer-fill.danger {
+  background: #ef4444;
+}
+
+.quiz-loading {
+  color: #64748b;
+}
+
 .quiz-card-header {
   display: flex;
   flex-direction: column;
@@ -52,6 +87,16 @@
 .quiz-option:hover {
   transform: translateY(-1px);
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.quiz-option.correct {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.quiz-option.wrong {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
 }
 
 .game-modal-backdrop {

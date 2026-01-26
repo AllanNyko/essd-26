@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QuizAnswerRequest;
 use App\Http\Requests\QuizValidateRequest;
 use App\Http\Requests\QuizStoreRequest;
 use App\Models\Quiz;
@@ -67,6 +68,33 @@ class QuizController extends Controller
         ]);
     }
 
+    public function playNext(Request $request): JsonResponse
+    {
+        $subjectIds = collect(explode(',', (string) $request->query('subject_ids')))
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->values();
+
+        $query = Quiz::query()->where('needs_review', false);
+
+        if ($subjectIds->isNotEmpty()) {
+            $query->whereIn('subject_id', $subjectIds);
+        }
+
+        $quiz = $query->inRandomOrder()->first();
+
+        if (! $quiz) {
+            return response()->json([
+                'message' => 'Nenhum quizz disponível.',
+                'quiz' => null,
+            ]);
+        }
+
+        return response()->json([
+            'quiz' => $quiz,
+        ]);
+    }
+
     public function validateQuiz(QuizValidateRequest $request, Quiz $quiz): JsonResponse
     {
         $action = $request->validated('action');
@@ -113,6 +141,33 @@ class QuizController extends Controller
 
         return response()->json([
             'message' => $action === 'validate' ? 'Questão validada.' : 'Questão invalidada.',
+        ]);
+    }
+
+    public function answer(QuizAnswerRequest $request, Quiz $quiz): JsonResponse
+    {
+        $data = $request->validated();
+        $timedOut = (bool) ($data['timed_out'] ?? false);
+
+        if ($timedOut) {
+            $quiz->increment('errors');
+
+            return response()->json([
+                'message' => 'Tempo esgotado. Questão registrada como errada.',
+            ]);
+        }
+
+        $selected = $data['selected_option'] ?? '';
+        $isCorrect = $selected === $quiz->option_one;
+
+        if ($isCorrect) {
+            $quiz->increment('hits');
+        } else {
+            $quiz->increment('errors');
+        }
+
+        return response()->json([
+            'message' => $isCorrect ? 'Resposta correta.' : 'Resposta incorreta.',
         ]);
     }
 }

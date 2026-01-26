@@ -51,3 +51,5 @@ Route::post('/notes', [NoteController::class, 'store']);
 Route::post('/quizzes', [QuizController::class, 'store']);
 Route::get('/quizzes/next', [QuizController::class, 'next']);
 Route::post('/quizzes/{quiz}/validate', [QuizController::class, 'validateQuiz']);
+Route::get('/quizzes/play/next', [QuizController::class, 'playNext']);
+Route::post('/quizzes/{quiz}/answer', [QuizController::class, 'answer']);

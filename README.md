@@ -36,3 +36,4 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-26: Central Games com cards de acesso.
 - 2026-01-26: Modo Individual com seleção de matérias.
 - 2026-01-26: Cards do modo individual e fluxo para tela de jogo.
+- 2026-01-26: Modo individual com timer e registro de acertos/erros.
