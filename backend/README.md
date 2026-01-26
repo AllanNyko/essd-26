@@ -1,0 +1,84 @@
+# Backend (Laravel 11)
+
+## Endpoints
+- Healthcheck: `GET /api/health` → `{ "status": "ok", "service": "backend" }`
+- Laravel up endpoint (framework): `GET /up`
+- Cadastro: `POST /api/auth/register`
+- Login: `POST /api/auth/login`
+- Recuperar senha: `POST /api/auth/forgot-password`
+- Atualizar usuário: `PATCH /api/users/{id}`
+- Upload de materiais: `POST /api/materials/upload`
+- Criar quizz: `POST /api/quizzes`
+- Listar matérias: `GET /api/subjects`
+
+## Como testar
+1) Suba os containers: `docker compose up -d`
+2) Health via Nginx: `curl http://localhost:8080/api/health`
+3) Health direto no backend: `docker compose exec backend curl http://localhost:9000/api/health` (se necessário expor)
+4) Rodar migrations: `docker compose exec backend php artisan migrate`
+5) Seed inicial de matérias: já criado via migration `create_subjects_table`
+
+## Payloads esperados (frontend)
+### Cadastro
+```json
+{
+	"name": "Joana Silva",
+	"email": "joana@email.com",
+	"password": "sua-senha",
+	"password_confirmation": "sua-senha"
+}
+```
+
+### Login
+```json
+{
+	"email": "joana@email.com",
+	"password": "sua-senha"
+}
+```
+
+### Recuperar senha
+```json
+{
+	"email": "joana@email.com"
+}
+```
+
+### Atualizar dados
+```json
+{
+	"name": "Novo Nome",
+	"email": "novo@email.com",
+	"password": "nova-senha",
+	"password_confirmation": "nova-senha"
+}
+```
+
+### Upload de materiais (multipart/form-data)
+- Campos: `user_id`, `subject_id`, `type`, `file`
+- `type`: `apostila` | `resumo` | `mapa-mental`
+
+### Listar matérias
+Retorna array de matérias com `id` e `name`.
+
+### Criar quizz
+```json
+{
+	"user_id": 1,
+	"subject_id": 1,
+	"question": "Pergunta com no mínimo 20 caracteres",
+	"option_one": "Alternativa correta",
+	"option_two": "Alternativa errada",
+	"option_three": "Alternativa errada",
+	"option_four": "Alternativa errada"
+}
+```
+
+## Colunas de desempenho
+- `hits`: número de acertos acumulados.
+- `errors`: número de erros acumulados.
+
+## Notas
+- Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já configuradas em `.env`.
+- URL pública: http://localhost:8080
+- Autenticação atual retorna o usuário em JSON (sem token). Proteções adicionais podem ser adicionadas com Sanctum/JWT.

@@ -1,0 +1,76 @@
+.material-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.material-upload-header h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.material-upload-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.material-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.material-field select {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.dropzone {
+  border: 2px dashed #94a3b8;
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.dropzone.has-file {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.dropzone-input {
+  display: none;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(120deg, #2563eb, #0ea5e9);
+  transition: width 120ms ease;
+}
+
+.status-error {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.status-success {
+  color: #16a34a;
+  font-weight: 600;
+}

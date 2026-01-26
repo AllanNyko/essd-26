@@ -1,0 +1,19 @@
+.materials-validate {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.materials-header h2 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.materials-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.materials-validate-empty {
+  display: flex;
+}
