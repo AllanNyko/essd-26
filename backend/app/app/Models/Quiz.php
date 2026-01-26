@@ -20,6 +20,7 @@ class Quiz extends Model
         'validations_count',
         'hits',
         'errors',
+        'invalidate_count',
     ];
 
     public function subject()

@@ -1,0 +1,155 @@
+import { useEffect, useState } from 'react'
+import FormCard from '../../components/FormCard'
+import Input from '../../components/Input'
+import { API_BASE_URL, parseJson } from '../../lib/api'
+import './ManageNotices.css'
+
+const ManageNotices = () => {
+  const [name, setName] = useState('')
+  const [notices, setNotices] = useState([])
+  const [status, setStatus] = useState({ loading: false, error: '', success: '' })
+  const [modal, setModal] = useState({ open: false, item: null })
+
+  const loadNotices = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/notices`, {
+        headers: { 'Accept': 'application/json' },
+      })
+      const data = await parseJson(response)
+
+      if (response.ok) {
+        setNotices(data?.notices || [])
+      }
+    } catch {
+      setNotices([])
+    }
+  }
+
+  useEffect(() => {
+    loadNotices()
+  }, [])
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    const trimmed = name.trim()
+    if (!trimmed) {
+      return
+    }
+
+    setStatus({ loading: true, error: '', success: '' })
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/notices`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name: trimmed }),
+      })
+
+      const data = await parseJson(response)
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Não foi possível cadastrar o edital.')
+      }
+
+      setStatus({ loading: false, error: '', success: data.message || 'Edital cadastrado com sucesso.' })
+      setName('')
+      loadNotices()
+    } catch (error) {
+      setStatus({ loading: false, error: error.message, success: '' })
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!modal.item?.id) return
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/notices/${modal.item.id}`, {
+        method: 'DELETE',
+        headers: { 'Accept': 'application/json' },
+      })
+
+      const data = await parseJson(response)
+
+      if (!response.ok) {
+        throw new Error(data?.message || 'Não foi possível excluir o edital.')
+      }
+
+      setModal({ open: false, item: null })
+      loadNotices()
+    } catch (error) {
+      setStatus({ loading: false, error: error.message, success: '' })
+      setModal({ open: false, item: null })
+    }
+  }
+
+  return (
+    <section className="manage-page">
+      <header className="materials-header">
+        <h2>Gerenciar Editais</h2>
+        <p>Cadastre novos editais para o banco de dados.</p>
+      </header>
+
+      <FormCard
+        title="Novo edital"
+        description="Informe o nome do edital a ser adicionado."
+        actionLabel={status.loading ? 'Salvando...' : 'Cadastrar'}
+        onSubmit={handleSubmit}
+        disabled={!name.trim() || status.loading}
+      >
+        <Input
+          label="Nome do edital"
+          name="name"
+          placeholder="Ex.: Edital 2026"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+        <div className="status">
+          {status.error && <span className="error">{status.error}</span>}
+          {status.success && <span className="success">{status.success}</span>}
+        </div>
+      </FormCard>
+
+      <div className="manage-list card">
+        <div className="card-header">
+          <h2>Editais cadastrados</h2>
+          <p>Confira os editais já disponíveis.</p>
+        </div>
+        <ul>
+          {notices.length === 0 && <li className="muted">Nenhum edital cadastrado.</li>}
+          {notices.map((notice) => (
+            <li key={notice.id} className="manage-item">
+              <span>{notice.name}</span>
+              <button
+                type="button"
+                className="danger"
+                onClick={() => setModal({ open: true, item: notice })}
+              >
+                Excluir
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {modal.open && (
+        <div className="modal-backdrop" role="presentation">
+          <div className="modal" role="dialog" aria-modal="true">
+            <h3>Excluir edital?</h3>
+            <p>Esta ação é irreversível. Deseja continuar?</p>
+            <div className="modal-actions">
+              <button type="button" className="ghost" onClick={() => setModal({ open: false, item: null })}>
+                Cancelar
+              </button>
+              <button type="button" className="danger" onClick={handleDelete}>
+                Entendo o risco, continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  )
+}
+
+export default ManageNotices

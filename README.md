@@ -25,3 +25,4 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 > Adicione aqui novas regras e decisões ao longo do tempo.
 
 - 2026-01-26: Documento criado para governança do projeto.
+- 2026-01-26: Telas de gestão incluem exclusão com confirmação e endpoints DELETE.

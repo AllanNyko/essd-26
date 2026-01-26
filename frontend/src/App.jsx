@@ -11,6 +11,10 @@ import MaterialsSend from './screens/MaterialsSend/MaterialsSend'
 import MaterialsSendUpload from './screens/MaterialsSendUpload/MaterialsSendUpload'
 import QuizSend from './screens/QuizSend/QuizSend'
 import MaterialsValidate from './screens/MaterialsValidate/MaterialsValidate'
+import QuizValidate from './screens/QuizValidate/QuizValidate'
+import ManageSubjects from './screens/ManageSubjects/ManageSubjects'
+import ManageNotices from './screens/ManageNotices/ManageNotices'
+import ManagePlans from './screens/ManagePlans/ManagePlans'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -131,6 +135,38 @@ function App() {
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
                   <MaterialsValidate />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/materials/validate/quiz"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <QuizValidate />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/manage/subjects"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManageSubjects />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/manage/notices"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManageNotices />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/manage/plans"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManagePlans />
                 </ProtectedRoute>
               )}
             />

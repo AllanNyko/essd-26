@@ -10,6 +10,19 @@
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
 - Listar matérias: `GET /api/subjects`
+- Cadastrar matéria: `POST /api/subjects`
+- Excluir matéria: `DELETE /api/subjects/{id}`
+- Listar editais: `GET /api/notices`
+- Cadastrar edital: `POST /api/notices`
+- Excluir edital: `DELETE /api/notices/{id}`
+- Listar planos: `GET /api/plans`
+- Cadastrar plano: `POST /api/plans`
+- Excluir plano: `DELETE /api/plans/{id}`
+
+### Exclusão
+- Os endpoints `DELETE` removem o registro definitivamente.
+- Próximo quizz: `GET /api/quizzes/next`
+- Validar quizz: `POST /api/quizzes/{id}/validate`
 
 ## Como testar
 1) Suba os containers: `docker compose up -d`
@@ -61,6 +74,27 @@
 ### Listar matérias
 Retorna array de matérias com `id` e `name`.
 
+### Cadastrar matéria
+```json
+{
+	"name": "Matemática"
+}
+```
+
+### Cadastrar edital
+```json
+{
+	"name": "Edital 2026"
+}
+```
+
+### Cadastrar plano
+```json
+{
+	"name": "Plano avançado"
+}
+```
+
 ### Criar quizz
 ```json
 {
@@ -74,9 +108,17 @@ Retorna array de matérias com `id` e `name`.
 }
 ```
 
+### Validar quizz
+```json
+{
+	"action": "validate" // ou "invalidate"
+}
+```
+
 ## Colunas de desempenho
 - `hits`: número de acertos acumulados.
 - `errors`: número de erros acumulados.
+- `invalidate_count`: número de invalidações acumuladas.
 
 ## Notas
 - Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já configuradas em `.env`.

@@ -11,6 +11,10 @@
 - Enviar Material (tipo) (`/materials/send/:type`)
 - Enviar Quizz (`/materials/quiz/send`)
 - Validar Materiais (`/materials/validate`)
+- Validar Quizz (`/materials/validate/quiz`)
+- Gerenciar Matérias (`/manage/subjects`)
+- Gerenciar Editais (`/manage/notices`)
+- Gerenciar Planos (`/manage/plans`)
 
 ## Stack e dependências
 - Vite + React 19
@@ -26,7 +30,17 @@ Endpoints usados:
 - Atualizar usuário: `PATCH /users/{id}`
 - Upload de materiais: `POST /materials/upload` (multipart/form-data)
 - Listar matérias: `GET /subjects`
+- Cadastrar matéria: `POST /subjects`
+- Excluir matéria: `DELETE /subjects/{id}`
+- Listar editais: `GET /notices`
+- Cadastrar edital: `POST /notices`
+- Excluir edital: `DELETE /notices/{id}`
+- Listar planos: `GET /plans`
+- Cadastrar plano: `POST /plans`
+- Excluir plano: `DELETE /plans/{id}`
 - Criar quizz: `POST /quizzes`
+- Próximo quizz: `GET /quizzes/next`
+- Validar quizz: `POST /quizzes/{id}/validate`
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.
@@ -41,6 +55,15 @@ Endpoints usados:
 - `/materials/send` mostra os tipos (Apostila, Resumo, Mapa Mental).
 - `/materials/send/:type` exibe o formulário de upload com select de matéria, drag & drop e barra de progresso.
 - `/materials/validate` exibe a área de validação (UI inicial).
+- `/materials/validate/quiz` exibe o card de validação de quizz.
+
+### Validação de quizz
+- A UI busca o próximo quizz em `GET /quizzes/next`.
+- Ao clicar em 👍/👎 envia `POST /quizzes/{id}/validate` com `{ action: "validate" | "invalidate" }`.
+
+## Gestão de cadastros
+- `/manage/subjects`, `/manage/notices`, `/manage/plans` permitem cadastrar e listar.
+- O botão Excluir abre um modal de confirmação e envia `DELETE` para o respectivo endpoint.
 
 ### Upload de materiais
 - Campos: `user_id`, `subject_id`, `type`, `file`
