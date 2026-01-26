@@ -19,6 +19,7 @@
 - Editar Edital (`/manage/notices/:id/edit`)
 - Editar Plano (`/manage/plans/:id/edit`)
 - Planos disponíveis (`/plans`)
+- Central de Notas (`/notes`)
 
 ## Stack e dependências
 - Vite + React 19
@@ -51,6 +52,8 @@ Endpoints usados:
 - Criar quizz: `POST /quizzes`
 - Próximo quizz: `GET /quizzes/next`
 - Validar quizz: `POST /quizzes/{id}/validate`
+- Listar notas: `GET /notes?user_id={id}`
+- Cadastrar nota: `POST /notes`
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.

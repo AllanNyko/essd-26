@@ -24,6 +24,8 @@
 - Detalhar plano: `GET /api/plans/{id}`
 - Atualizar plano: `PATCH /api/plans/{id}`
 - Excluir plano: `DELETE /api/plans/{id}`
+- Listar notas: `GET /api/notes?user_id={id}`
+- Cadastrar nota: `POST /api/notes`
 
 ### Exclusão
 - Os endpoints `DELETE` removem o registro definitivamente.
@@ -130,6 +132,16 @@ Retorna array de matérias com `id` e `name`.
   "price": 119.9,
   "coverage": "Conteúdo completo do curso, simulados e suporte.",
   "audience": "Alunos do curso de formação"
+}
+```
+
+### Cadastrar nota
+```json
+{
+	"user_id": 1,
+	"notice_id": 2,
+	"subject_id": 3,
+	"score": 8.5
 }
 ```
 

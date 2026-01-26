@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MaterialController;
 use App\Http\Controllers\Api\NoticeController;
+use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\QuizController;
@@ -43,6 +44,9 @@ Route::post('/plans', [PlanController::class, 'store']);
 Route::get('/plans/{plan}', [PlanController::class, 'show']);
 Route::patch('/plans/{plan}', [PlanController::class, 'update']);
 Route::delete('/plans/{plan}', [PlanController::class, 'destroy']);
+
+Route::get('/notes', [NoteController::class, 'index']);
+Route::post('/notes', [NoteController::class, 'store']);
 
 Route::post('/quizzes', [QuizController::class, 'store']);
 Route::get('/quizzes/next', [QuizController::class, 'next']);

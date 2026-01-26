@@ -19,6 +19,7 @@ import ManageSubjectEdit from './screens/ManageSubjectEdit/ManageSubjectEdit'
 import ManageNoticeEdit from './screens/ManageNoticeEdit/ManageNoticeEdit'
 import ManagePlanEdit from './screens/ManagePlanEdit/ManagePlanEdit'
 import PlansOverview from './screens/PlansOverview/PlansOverview'
+import NotesCenter from './screens/NotesCenter/NotesCenter'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -203,6 +204,14 @@ function App() {
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
                   <PlansOverview />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/notes"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <NotesCenter />
                 </ProtectedRoute>
               )}
             />

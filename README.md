@@ -31,3 +31,5 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-26: Perfil com telefone, edital e indicação do plano atual.
 - 2026-01-26: Tela de planos com regra de não downgrade e moeda pt-BR.
 - 2026-01-26: Quizz com 3 validações sai da fila; 5 invalidações vai para revisão.
+- 2026-01-26: Central de Notas com seleção de matéria e nota.
+- 2026-01-26: Notas vinculadas a usuário, edital e matéria.
