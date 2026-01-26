@@ -8,3 +8,36 @@
 .signup-screen .card {
 	width: min(420px, 100%);
 }
+
+.signup-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.signup-field span {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.signup-field select {
+	border: 1px solid #cbd5e1;
+	border-radius: 10px;
+	padding: 12px;
+	font-size: 1rem;
+}
+
+.signup-actions {
+	display: flex;
+	justify-content: flex-start;
+}
+
+.secondary {
+	background: #e2e8f0;
+	color: #0f172a;
+	border: none;
+	border-radius: 10px;
+	padding: 10px 14px;
+	font-weight: 600;
+	cursor: pointer;
+}

@@ -15,6 +15,10 @@ import QuizValidate from './screens/QuizValidate/QuizValidate'
 import ManageSubjects from './screens/ManageSubjects/ManageSubjects'
 import ManageNotices from './screens/ManageNotices/ManageNotices'
 import ManagePlans from './screens/ManagePlans/ManagePlans'
+import ManageSubjectEdit from './screens/ManageSubjectEdit/ManageSubjectEdit'
+import ManageNoticeEdit from './screens/ManageNoticeEdit/ManageNoticeEdit'
+import ManagePlanEdit from './screens/ManagePlanEdit/ManagePlanEdit'
+import PlansOverview from './screens/PlansOverview/PlansOverview'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -155,6 +159,14 @@ function App() {
               )}
             />
             <Route
+              path="/manage/subjects/:id/edit"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManageSubjectEdit />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
               path="/manage/notices"
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
@@ -163,10 +175,34 @@ function App() {
               )}
             />
             <Route
+              path="/manage/notices/:id/edit"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManageNoticeEdit />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
               path="/manage/plans"
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
                   <ManagePlans />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/manage/plans/:id/edit"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <ManagePlanEdit />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/plans"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <PlansOverview />
                 </ProtectedRoute>
               )}
             />

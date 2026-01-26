@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NoticeStoreRequest;
+use App\Http\Requests\NoticeUpdateRequest;
 use App\Models\Notice;
 use Illuminate\Http\JsonResponse;
 
@@ -24,6 +25,23 @@ class NoticeController extends Controller
             'message' => 'Edital cadastrado com sucesso.',
             'notice' => $notice,
         ], 201);
+    }
+
+    public function show(Notice $notice): JsonResponse
+    {
+        return response()->json([
+            'notice' => $notice,
+        ]);
+    }
+
+    public function update(NoticeUpdateRequest $request, Notice $notice): JsonResponse
+    {
+        $notice->update($request->validated());
+
+        return response()->json([
+            'message' => 'Edital atualizado com sucesso.',
+            'notice' => $notice,
+        ]);
     }
 
     public function destroy(Notice $notice): JsonResponse

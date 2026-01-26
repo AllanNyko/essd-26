@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './UpdateProfile.css'
 
 const UpdateProfile = ({ user, onUserUpdated }) => {
+  const navigate = useNavigate()
   const initial = useMemo(() => ({
     id: user?.id ? String(user.id) : '',
     name: user?.name || '',
     email: user?.email || '',
+    phone: user?.phone || '',
+    notice_id: user?.notice_id ? String(user.notice_id) : '',
     password: '',
     password_confirmation: '',
   }), [user])
@@ -16,14 +20,63 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
   const [form, setForm] = useState(initial)
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
   const [modal, setModal] = useState({ open: false, type: '', message: '' })
+  const [plans, setPlans] = useState([])
+  const [notices, setNotices] = useState([])
 
   useEffect(() => {
     setForm(initial)
   }, [initial])
 
+  useEffect(() => {
+    let active = true
+
+    const loadPlans = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/plans`, {
+          headers: { 'Accept': 'application/json' },
+        })
+        const data = await parseJson(response)
+
+        if (response.ok && active) {
+          setPlans(data?.plans || [])
+        }
+      } catch {
+        if (active) {
+          setPlans([])
+        }
+      }
+    }
+
+    const loadNotices = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/notices`, {
+          headers: { 'Accept': 'application/json' },
+        })
+        const data = await parseJson(response)
+
+        if (response.ok && active) {
+          setNotices(data?.notices || [])
+        }
+      } catch {
+        if (active) {
+          setNotices([])
+        }
+      }
+    }
+
+    loadPlans()
+    loadNotices()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
   const isDirty = form.id !== initial.id
     || form.name !== initial.name
     || form.email !== initial.email
+    || form.phone !== initial.phone
+    || form.notice_id !== initial.notice_id
     || form.password.length > 0
     || form.password_confirmation.length > 0
 
@@ -49,6 +102,10 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     const payload = {}
     if (form.name) payload.name = form.name
     if (form.email) payload.email = form.email
+    if (form.phone || form.phone === '') payload.phone = form.phone
+    if (form.notice_id !== initial.notice_id) {
+      payload.notice_id = form.notice_id ? Number(form.notice_id) : null
+    }
     if (form.password) {
       payload.password = form.password
       payload.password_confirmation = form.password_confirmation
@@ -73,6 +130,8 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
           ...prev,
           name: data.user.name || prev.name,
           email: data.user.email || prev.email,
+          phone: data.user.phone || '',
+          notice_id: data.user.notice_id ? String(data.user.notice_id) : '',
           password: '',
           password_confirmation: '',
         }))
@@ -97,15 +156,30 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
         onSubmit={handleSubmit}
         disabled={!isDirty || status.loading}
       >
-        <Input
-          label="ID do usuário"
-          name="id"
-          placeholder="1"
-          value={form.id}
-          onChange={handleChange}
-        />
+        <input type="hidden" name="id" value={form.id} readOnly />
         <Input label="Nome completo" name="name" placeholder="Joana Silva" value={form.name} onChange={handleChange} required={false} />
         <Input label="E-mail" type="email" name="email" placeholder="voce@email.com" value={form.email} onChange={handleChange} required={false} />
+        <Input label="Telefone" name="phone" placeholder="(11) 99999-9999" value={form.phone} onChange={handleChange} required={false} />
+        <label className="profile-field">
+          <span>Edital</span>
+          <select name="notice_id" value={form.notice_id} onChange={handleChange}>
+            <option value="">Sem edital</option>
+            {notices.map((notice) => (
+              <option key={notice.id} value={notice.id}>{notice.name}</option>
+            ))}
+          </select>
+        </label>
+        <div className="profile-plan">
+          <div>
+            <span className="profile-plan-label">Plano atual</span>
+            <strong>
+              {plans.find((plan) => String(plan.id) === String(user?.plan_id))?.name || 'Sem plano'}
+            </strong>
+          </div>
+          <button type="button" className="link-button" onClick={() => navigate('/plans')}>
+            Alterar plano
+          </button>
+        </div>
         <Input
           label="Nova senha (opcional)"
           type="password"

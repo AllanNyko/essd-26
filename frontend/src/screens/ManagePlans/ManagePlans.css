@@ -29,6 +29,42 @@
   gap: 12px;
 }
 
+.manage-item-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.manage-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.manage-item-info small {
+  color: #475569;
+  font-weight: 500;
+}
+
+.plan-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plan-field span {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.plan-field textarea {
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
 .danger {
   background: #dc2626;
   color: #ffffff;
@@ -45,6 +81,16 @@
 
 .ghost {
   background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary {
+  background: #e0f2fe;
   color: #0f172a;
   border: none;
   border-radius: 10px;

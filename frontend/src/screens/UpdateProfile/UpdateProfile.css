@@ -28,3 +28,46 @@
 .modal.error h3 {
 	color: #dc2626;
 }
+
+.profile-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.profile-field span {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.profile-field select {
+	border: 1px solid #cbd5e1;
+	border-radius: 10px;
+	padding: 12px;
+	font-size: 1rem;
+}
+
+.profile-plan {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 12px;
+}
+
+.profile-plan-label {
+	display: block;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.link-button {
+	background: transparent;
+	border: none;
+	color: #2563eb;
+	font-weight: 600;
+	cursor: pointer;
+}

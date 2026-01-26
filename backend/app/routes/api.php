@@ -28,14 +28,20 @@ Route::post('/materials/upload', [MaterialController::class, 'upload']);
 
 Route::get('/subjects', [SubjectController::class, 'index']);
 Route::post('/subjects', [SubjectController::class, 'store']);
+Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
+Route::patch('/subjects/{subject}', [SubjectController::class, 'update']);
 Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
 
 Route::get('/notices', [NoticeController::class, 'index']);
 Route::post('/notices', [NoticeController::class, 'store']);
+Route::get('/notices/{notice}', [NoticeController::class, 'show']);
+Route::patch('/notices/{notice}', [NoticeController::class, 'update']);
 Route::delete('/notices/{notice}', [NoticeController::class, 'destroy']);
 
 Route::get('/plans', [PlanController::class, 'index']);
 Route::post('/plans', [PlanController::class, 'store']);
+Route::get('/plans/{plan}', [PlanController::class, 'show']);
+Route::patch('/plans/{plan}', [PlanController::class, 'update']);
 Route::delete('/plans/{plan}', [PlanController::class, 'destroy']);
 
 Route::post('/quizzes', [QuizController::class, 'store']);

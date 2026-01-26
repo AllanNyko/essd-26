@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './ManageSubjects.css'
 
 const ManageSubjects = () => {
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [subjects, setSubjects] = useState([])
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
@@ -120,13 +122,22 @@ const ManageSubjects = () => {
           {subjects.map((subject) => (
             <li key={subject.id} className="manage-item">
               <span>{subject.name}</span>
-              <button
-                type="button"
-                className="danger"
-                onClick={() => setModal({ open: true, item: subject })}
-              >
-                Excluir
-              </button>
+              <div className="manage-item-actions">
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => navigate(`/manage/subjects/${subject.id}/edit`)}
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={() => setModal({ open: true, item: subject })}
+                >
+                  Excluir
+                </button>
+              </div>
             </li>
           ))}
         </ul>

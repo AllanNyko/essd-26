@@ -11,12 +11,18 @@
 - Criar quizz: `POST /api/quizzes`
 - Listar matérias: `GET /api/subjects`
 - Cadastrar matéria: `POST /api/subjects`
+- Detalhar matéria: `GET /api/subjects/{id}`
+- Atualizar matéria: `PATCH /api/subjects/{id}`
 - Excluir matéria: `DELETE /api/subjects/{id}`
 - Listar editais: `GET /api/notices`
 - Cadastrar edital: `POST /api/notices`
+- Detalhar edital: `GET /api/notices/{id}`
+- Atualizar edital: `PATCH /api/notices/{id}`
 - Excluir edital: `DELETE /api/notices/{id}`
 - Listar planos: `GET /api/plans`
 - Cadastrar plano: `POST /api/plans`
+- Detalhar plano: `GET /api/plans/{id}`
+- Atualizar plano: `PATCH /api/plans/{id}`
 - Excluir plano: `DELETE /api/plans/{id}`
 
 ### Exclusão
@@ -37,6 +43,9 @@
 {
 	"name": "Joana Silva",
 	"email": "joana@email.com",
+	"phone": "11999999999",
+	"plan_id": 1,
+	"notice_id": 2,
 	"password": "sua-senha",
 	"password_confirmation": "sua-senha"
 }
@@ -62,6 +71,8 @@
 {
 	"name": "Novo Nome",
 	"email": "novo@email.com",
+	"phone": "11999999999",
+	"notice_id": 2,
 	"password": "nova-senha",
 	"password_confirmation": "nova-senha"
 }
@@ -81,6 +92,13 @@ Retorna array de matérias com `id` e `name`.
 }
 ```
 
+### Atualizar matéria
+```json
+{
+  "name": "Matemática avançada"
+}
+```
+
 ### Cadastrar edital
 ```json
 {
@@ -88,10 +106,30 @@ Retorna array de matérias com `id` e `name`.
 }
 ```
 
+### Atualizar edital
+```json
+{
+  "name": "Edital 2026 - Revisado"
+}
+```
+
 ### Cadastrar plano
 ```json
 {
-	"name": "Plano avançado"
+	"name": "Plano avançado",
+	"price": 99.9,
+	"coverage": "Conteúdo completo do curso, simulados e suporte.",
+	"audience": "Alunos do curso de formação"
+}
+```
+
+### Atualizar plano
+```json
+{
+  "name": "Plano avançado",
+  "price": 119.9,
+  "coverage": "Conteúdo completo do curso, simulados e suporte.",
+  "audience": "Alunos do curso de formação"
 }
 ```
 

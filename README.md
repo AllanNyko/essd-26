@@ -26,3 +26,7 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 
 - 2026-01-26: Documento criado para governança do projeto.
 - 2026-01-26: Telas de gestão incluem exclusão com confirmação e endpoints DELETE.
+- 2026-01-26: Cadastro em 2 etapas com telefone e plano; usuários com vínculo opcional a edital.
+- 2026-01-26: Telas de gestão com edição e endpoints GET/PATCH por ID.
+- 2026-01-26: Perfil com telefone, edital e indicação do plano atual.
+- 2026-01-26: Tela de planos com regra de não downgrade e moeda pt-BR.

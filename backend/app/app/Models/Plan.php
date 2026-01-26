@@ -11,5 +11,8 @@ class Plan extends Model
 
     protected $fillable = [
         'name',
+        'price',
+        'coverage',
+        'audience',
     ];
 }

@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class PlanStoreRequest extends FormRequest
+class PlanUpdateRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -13,8 +14,16 @@ class PlanStoreRequest extends FormRequest
 
     public function rules(): array
     {
+        $planId = $this->route('plan')?->id;
+
         return [
-            'name' => ['required', 'string', 'min:2', 'max:255', 'unique:plans,name'],
+            'name' => [
+                'required',
+                'string',
+                'min:2',
+                'max:255',
+                Rule::unique('plans', 'name')->ignore($planId),
+            ],
             'price' => ['required', 'numeric', 'min:0'],
             'coverage' => ['required', 'string', 'min:5'],
             'audience' => ['required', 'string', 'min:3', 'max:255'],

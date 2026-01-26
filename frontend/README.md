@@ -15,6 +15,10 @@
 - Gerenciar Matérias (`/manage/subjects`)
 - Gerenciar Editais (`/manage/notices`)
 - Gerenciar Planos (`/manage/plans`)
+- Editar Matéria (`/manage/subjects/:id/edit`)
+- Editar Edital (`/manage/notices/:id/edit`)
+- Editar Plano (`/manage/plans/:id/edit`)
+- Planos disponíveis (`/plans`)
 
 ## Stack e dependências
 - Vite + React 19
@@ -31,12 +35,18 @@ Endpoints usados:
 - Upload de materiais: `POST /materials/upload` (multipart/form-data)
 - Listar matérias: `GET /subjects`
 - Cadastrar matéria: `POST /subjects`
+- Detalhar matéria: `GET /subjects/{id}`
+- Atualizar matéria: `PATCH /subjects/{id}`
 - Excluir matéria: `DELETE /subjects/{id}`
 - Listar editais: `GET /notices`
 - Cadastrar edital: `POST /notices`
+- Detalhar edital: `GET /notices/{id}`
+- Atualizar edital: `PATCH /notices/{id}`
 - Excluir edital: `DELETE /notices/{id}`
 - Listar planos: `GET /plans`
 - Cadastrar plano: `POST /plans`
+- Detalhar plano: `GET /plans/{id}`
+- Atualizar plano: `PATCH /plans/{id}`
 - Excluir plano: `DELETE /plans/{id}`
 - Criar quizz: `POST /quizzes`
 - Próximo quizz: `GET /quizzes/next`
@@ -49,6 +59,15 @@ Endpoints usados:
 - Rotas públicas (`/login`, `/signup`, `/forgot-password`) não ficam acessíveis quando já autenticado.
 - Logout disponível na gaveta lateral da Home, redireciona para `/login`.
 - Sessão simples via `localStorage` (chave `essd_user`).
+
+### Cadastro em 2 etapas
+- Etapa 1: dados pessoais (nome, e-mail, telefone, senha).
+- Etapa 2: escolha do plano (carregado via `GET /plans`).
+
+### Planos disponíveis
+- `/plans` lista os planos para o usuário.
+- Planos mais baratos que o atual não exibem ação de mudança.
+- Valores são exibidos no formato monetário pt-BR.
 
 ## Fluxo Central de Materiais
 - `/materials` apresenta os cards principais (Enviar materiais, Enviar quizz, Validar materiais).
@@ -71,6 +90,12 @@ Endpoints usados:
 
 ### Criar quizz
 - Campos: `user_id`, `subject_id`, `question`, `option_one`, `option_two`, `option_three`, `option_four`
+
+### Cadastro
+- Campos: `name`, `email`, `phone`, `plan_id`, `password`, `password_confirmation` (opcional: `notice_id`)
+
+### Atualização de perfil
+- Campos: `name`, `email`, `phone`, `notice_id`, `password`, `password_confirmation`
 
 ## Como rodar
 1) Instalar deps (já feito no container, mas localmente): `npm install`

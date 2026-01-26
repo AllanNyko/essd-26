@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './ManageNotices.css'
 
 const ManageNotices = () => {
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [notices, setNotices] = useState([])
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
@@ -120,13 +122,22 @@ const ManageNotices = () => {
           {notices.map((notice) => (
             <li key={notice.id} className="manage-item">
               <span>{notice.name}</span>
-              <button
-                type="button"
-                className="danger"
-                onClick={() => setModal({ open: true, item: notice })}
-              >
-                Excluir
-              </button>
+              <div className="manage-item-actions">
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => navigate(`/manage/notices/${notice.id}/edit`)}
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={() => setModal({ open: true, item: notice })}
+                >
+                  Excluir
+                </button>
+              </div>
             </li>
           ))}
         </ul>
