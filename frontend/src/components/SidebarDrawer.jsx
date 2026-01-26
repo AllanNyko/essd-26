@@ -14,6 +14,7 @@ const SidebarDrawer = ({ open, onClose, onLogout }) => (
         <NavLink to="/home" onClick={onClose}>Home</NavLink>
         <NavLink to="/materials" onClick={onClose}>Central de Materiais</NavLink>
         <NavLink to="/notes" onClick={onClose}>Central de Notas</NavLink>
+        <NavLink to="/games" onClick={onClose}>Central Games</NavLink>
         <NavLink to="/manage/subjects" onClick={onClose}>Gerenciar Matérias</NavLink>
         <NavLink to="/manage/notices" onClick={onClose}>Gerenciar Editais</NavLink>
         <NavLink to="/manage/plans" onClick={onClose}>Gerenciar Planos</NavLink>

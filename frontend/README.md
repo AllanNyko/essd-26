@@ -20,6 +20,9 @@
 - Editar Plano (`/manage/plans/:id/edit`)
 - Planos disponíveis (`/plans`)
 - Central de Notas (`/notes`)
+- Central Games (`/games`)
+- Modo Individual (`/games/individual`)
+- Jogo individual (`/games/individual/play`)
 
 ## Stack e dependências
 - Vite + React 19

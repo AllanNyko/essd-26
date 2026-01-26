@@ -1,0 +1,99 @@
+.games-individual {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.games-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.games-mode-card {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  min-height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  color: #ffffff;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.18);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.games-mode-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.games-mode-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.games-mode-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.games-mode-card span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.games-mode-card.single {
+  background-image: linear-gradient(120deg, rgba(37, 99, 235, 0.85), rgba(14, 165, 233, 0.7)),
+    url('https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1200&q=60');
+}
+
+.games-mode-card.multi {
+  background-image: linear-gradient(120deg, rgba(16, 185, 129, 0.85), rgba(34, 197, 94, 0.7)),
+    url('https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=60');
+}
+
+.games-multi-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.games-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.games-checkbox input {
+  width: 16px;
+  height: 16px;
+}
+
+.muted {
+  color: #64748b;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .games-mode-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .games-mode-card {
+    min-height: 160px;
+  }
+}

@@ -33,3 +33,6 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-26: Quizz com 3 validações sai da fila; 5 invalidações vai para revisão.
 - 2026-01-26: Central de Notas com seleção de matéria e nota.
 - 2026-01-26: Notas vinculadas a usuário, edital e matéria.
+- 2026-01-26: Central Games com cards de acesso.
+- 2026-01-26: Modo Individual com seleção de matérias.
+- 2026-01-26: Cards do modo individual e fluxo para tela de jogo.

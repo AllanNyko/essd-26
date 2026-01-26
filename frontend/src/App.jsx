@@ -20,6 +20,9 @@ import ManageNoticeEdit from './screens/ManageNoticeEdit/ManageNoticeEdit'
 import ManagePlanEdit from './screens/ManagePlanEdit/ManagePlanEdit'
 import PlansOverview from './screens/PlansOverview/PlansOverview'
 import NotesCenter from './screens/NotesCenter/NotesCenter'
+import GamesCenter from './screens/GamesCenter/GamesCenter'
+import GamesIndividual from './screens/GamesIndividual/GamesIndividual'
+import GamesIndividualPlay from './screens/GamesIndividualPlay/GamesIndividualPlay'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -212,6 +215,30 @@ function App() {
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
                   <NotesCenter />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/games"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <GamesCenter />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/games/individual"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <GamesIndividual />
+                </ProtectedRoute>
+              )}
+            />
+            <Route
+              path="/games/individual/play"
+              element={(
+                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
+                  <GamesIndividualPlay />
                 </ProtectedRoute>
               )}
             />
