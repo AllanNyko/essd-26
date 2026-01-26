@@ -53,7 +53,7 @@ class QuizController extends Controller
             ->whereDoesntHave('quizValidations', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })
-            ->orderBy('id')
+            ->orderByRaw('RAND()')
             ->first();
 
         if (! $quiz) {
@@ -75,13 +75,24 @@ class QuizController extends Controller
             ->map(fn ($id) => (int) $id)
             ->values();
 
-        $query = Quiz::query()->where('needs_review', false);
+        $answeredIds = collect(explode(',', (string) $request->query('exclude_ids')))
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->values();
+
+        $query = Quiz::query()
+            ->where('needs_review', false)
+            ->where('validations_count', '>=', 3);
+
+        if ($answeredIds->isNotEmpty()) {
+            $query->whereNotIn('id', $answeredIds);
+        }
 
         if ($subjectIds->isNotEmpty()) {
             $query->whereIn('subject_id', $subjectIds);
         }
 
-        $quiz = $query->inRandomOrder()->first();
+        $quiz = $query->orderByRaw('RAND()')->first();
 
         if (! $quiz) {
             return response()->json([

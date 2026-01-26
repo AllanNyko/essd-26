@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './GamesIndividualPlay.css'
 
@@ -11,16 +11,24 @@ const GamesIndividualPlay = () => {
   const [selectedOption, setSelectedOption] = useState('')
   const [result, setResult] = useState('')
   const [timedOut, setTimedOut] = useState(false)
+  const [answeredIds, setAnsweredIds] = useState([])
   const timeoutHandled = useRef(false)
   const [resettingTimer, setResettingTimer] = useState(false)
   const timerRef = useRef(null)
 
-  const loadQuiz = async () => {
+  const loadQuiz = async (excludeIds = []) => {
     setLoading(true)
     try {
       const storedSubjects = localStorage.getItem('essd_game_subjects')
       const subjectIds = storedSubjects ? JSON.parse(storedSubjects) : []
-      const query = subjectIds.length > 0 ? `?subject_ids=${subjectIds.join(',')}` : ''
+      const params = new URLSearchParams()
+      if (subjectIds.length > 0) {
+        params.set('subject_ids', subjectIds.join(','))
+      }
+      if (excludeIds.length > 0) {
+        params.set('exclude_ids', excludeIds.join(','))
+      }
+      const query = params.toString() ? `?${params.toString()}` : ''
 
       const response = await fetch(`${API_BASE_URL}/quizzes/play/next${query}`, {
         headers: { 'Accept': 'application/json' },
@@ -114,7 +122,12 @@ const GamesIndividualPlay = () => {
   }
 
   const handleNext = () => {
-    loadQuiz()
+    const nextExclude = quiz?.id ? [...answeredIds, quiz.id] : [...answeredIds]
+    setAnsweredIds(nextExclude)
+    setResettingTimer(true)
+    setTimeLeft(20)
+    requestAnimationFrame(() => setResettingTimer(false))
+    loadQuiz(nextExclude)
   }
 
   const handleSelect = (option) => {
@@ -132,10 +145,18 @@ const GamesIndividualPlay = () => {
     sendAnswer({ selected: option, timedOut: false })
   }
 
-  const options = quiz ? [quiz.option_one, quiz.option_two, quiz.option_three, quiz.option_four] : []
+  const options = useMemo(() => {
+    if (!quiz) return []
+    const shuffled = [quiz.option_one, quiz.option_two, quiz.option_three, quiz.option_four]
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+    }
+    return shuffled
+  }, [quiz?.id])
   const progress = timeLeft <= 0 ? 0 : Math.max(0, Math.min(100, (timeLeft / 20) * 100))
   const timerClass = timeLeft <= 5 ? 'danger' : timeLeft <= 10 ? 'warning' : 'safe'
-  const timerResetClass = resettingTimer || timeLeft <= 0 ? 'resetting' : ''
+  const timerResetClass = resettingTimer || timeLeft >= 20 || timeLeft <= 0 ? 'resetting' : ''
 
   return (
     <section className="games-play">
@@ -165,7 +186,11 @@ const GamesIndividualPlay = () => {
       {!loading && quiz && (
         <div className="quiz-card">
           <div className="quiz-card-header">
-            <span className="quiz-badge">Pergunta</span>
+            <div className="quiz-meta">
+              <span className="quiz-badge">#{quiz.id}</span>
+              <span className="quiz-meta-item">Matéria #{quiz.subject_id}</span>
+              <span className="quiz-meta-item">Dificuldade: fácil</span>
+            </div>
             <h3>{quiz.question}</h3>
           </div>
           <div className="quiz-options">

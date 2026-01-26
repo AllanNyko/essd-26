@@ -9,7 +9,7 @@
  - Atualizar usuário: `PATCH /api/users/{id}`
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
-- Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2`
+- Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /api/quizzes/{id}/answer`
 - Listar matérias: `GET /api/subjects`
 - Cadastrar matéria: `POST /api/subjects`
@@ -182,6 +182,9 @@ Retorna array de matérias com `id` e `name`.
 - `errors`: número de erros acumulados.
 - `invalidate_count`: número de invalidações acumuladas.
 - `needs_review`: indica revisão após 5 invalidações.
+
+## Regras de jogo
+- O modo de jogo usa apenas quizzes validados (>= 3 validações) e sem revisão.
 
 ## Notas
 - Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já ajustadas no `.env`.
