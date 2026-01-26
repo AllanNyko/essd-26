@@ -77,8 +77,9 @@ Endpoints usados:
 - `/materials/validate/quiz` exibe o card de validação de quizz.
 
 ### Validação de quizz
-- A UI busca o próximo quizz em `GET /quizzes/next`.
-- Ao clicar em 👍/👎 envia `POST /quizzes/{id}/validate` com `{ action: "validate" | "invalidate" }`.
+- A UI busca o próximo quizz em `GET /quizzes/next?user_id=...`.
+- Ao clicar em 👍/👎 envia `POST /quizzes/{id}/validate` com `{ action: "validate" | "invalidate", user_id }`.
+- Quizz com 3 validações não aparece mais; com 5 invalidações entra em revisão.
 
 ## Gestão de cadastros
 - `/manage/subjects`, `/manage/notices`, `/manage/plans` permitem cadastrar e listar.

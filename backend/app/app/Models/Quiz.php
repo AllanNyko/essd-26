@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
@@ -21,10 +22,16 @@ class Quiz extends Model
         'hits',
         'errors',
         'invalidate_count',
+        'needs_review',
     ];
 
     public function subject()
     {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function quizValidations(): HasMany
+    {
+        return $this->hasMany(QuizValidation::class);
     }
 }

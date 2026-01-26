@@ -15,6 +15,7 @@ class QuizValidateRequest extends FormRequest
     {
         return [
             'action' => ['required', 'in:validate,invalidate'],
+            'user_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

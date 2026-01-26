@@ -8,9 +8,19 @@ const QuizValidate = () => {
   const [modal, setModal] = useState({ open: false, message: '' })
 
   const loadQuiz = async () => {
+    const storedUser = localStorage.getItem('essd_user')
+    const currentUser = storedUser ? JSON.parse(storedUser) : null
+    const userId = currentUser?.id
+
+    if (!userId) {
+      setQuiz(null)
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/quizzes/next`, {
+      const response = await fetch(`${API_BASE_URL}/quizzes/next?user_id=${userId}`, {
         headers: { 'Accept': 'application/json' },
       })
       const data = await parseJson(response)
@@ -27,10 +37,18 @@ const QuizValidate = () => {
   const handleAction = async (action) => {
     if (!quiz?.id) return
 
+    const storedUser = localStorage.getItem('essd_user')
+    const currentUser = storedUser ? JSON.parse(storedUser) : null
+    const userId = currentUser?.id
+
+    if (!userId) {
+      return
+    }
+
     await fetch(`${API_BASE_URL}/quizzes/${quiz.id}/validate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ action }),
+      body: JSON.stringify({ action, user_id: userId }),
     })
 
     setModal({
@@ -57,8 +75,8 @@ const QuizValidate = () => {
         <div className="quiz-validate-empty">
           <div className="card">
             <div className="card-header">
-              <h3>Sem pendências</h3>
-              <p>Nenhum quizz aguardando validação.</p>
+              <h3>Sem quizzes disponíveis</h3>
+              <p>Não há quizzes disponíveis para validação no momento.</p>
             </div>
           </div>
         </div>

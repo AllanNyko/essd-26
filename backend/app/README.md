@@ -149,7 +149,8 @@ Retorna array de matérias com `id` e `name`.
 ### Validar quizz
 ```json
 {
-	"action": "validate" // ou "invalidate"
+	"action": "validate", // ou "invalidate"
+	"user_id": 1
 }
 ```
 
@@ -157,6 +158,7 @@ Retorna array de matérias com `id` e `name`.
 - `hits`: número de acertos acumulados.
 - `errors`: número de erros acumulados.
 - `invalidate_count`: número de invalidações acumuladas.
+- `needs_review`: indica revisão após 5 invalidações.
 
 ## Notas
 - Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já ajustadas no `.env`.
