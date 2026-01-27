@@ -21,26 +21,29 @@ const GamesIndividualPlay = () => {
   const sessionRef = useRef(null)
   const [userStats, setUserStats] = useState({ hits: 0, errors: 0, points: 0 })
 
+  const fetchQuiz = async (excludeIds = []) => {
+    const storedSubjects = localStorage.getItem('essd_game_subjects')
+    const subjectIds = storedSubjects ? JSON.parse(storedSubjects) : []
+    const params = new URLSearchParams()
+    if (subjectIds.length > 0) {
+      params.set('subject_ids', subjectIds.join(','))
+    }
+    if (excludeIds.length > 0) {
+      params.set('exclude_ids', excludeIds.join(','))
+    }
+    const query = params.toString() ? `?${params.toString()}` : ''
+
+    const response = await fetch(`${API_BASE_URL}/quizzes/play/next${query}`, {
+      headers: { 'Accept': 'application/json' },
+    })
+    const data = await parseJson(response)
+    return data?.quiz || null
+  }
+
   const loadQuiz = async (excludeIds = []) => {
     setLoading(true)
     try {
-      const storedSubjects = localStorage.getItem('essd_game_subjects')
-      const subjectIds = storedSubjects ? JSON.parse(storedSubjects) : []
-      const params = new URLSearchParams()
-      if (subjectIds.length > 0) {
-        params.set('subject_ids', subjectIds.join(','))
-      }
-      if (excludeIds.length > 0) {
-        params.set('exclude_ids', excludeIds.join(','))
-      }
-      const query = params.toString() ? `?${params.toString()}` : ''
-
-      const response = await fetch(`${API_BASE_URL}/quizzes/play/next${query}`, {
-        headers: { 'Accept': 'application/json' },
-      })
-      const data = await parseJson(response)
-      const nextQuiz = data?.quiz || null
-
+      const nextQuiz = await fetchQuiz(excludeIds)
       const lastQuizId = Number(localStorage.getItem('essd_last_quiz_id') || 0)
       const shouldRetry =
         nextQuiz?.id &&
@@ -49,7 +52,8 @@ const GamesIndividualPlay = () => {
         excludeIds.length === 0
 
       if (shouldRetry) {
-        await loadQuiz([lastQuizId])
+        const retryQuiz = await fetchQuiz([lastQuizId])
+        setQuiz(retryQuiz || nextQuiz)
         return
       }
 

@@ -55,6 +55,7 @@ const GamesSurvivor = () => {
 
   const handleStartMulti = () => {
     if (selectedSubjects.length === 0) return
+    localStorage.removeItem('essd_last_quiz_id')
     localStorage.setItem('essd_game_mode', 'survivor')
     localStorage.setItem('essd_game_subjects', JSON.stringify(selectedSubjects))
     navigate('/games/survivor/play')
@@ -62,6 +63,7 @@ const GamesSurvivor = () => {
 
   const handleStartSingle = () => {
     if (!selectedSubjectId) return
+    localStorage.removeItem('essd_last_quiz_id')
     localStorage.setItem('essd_game_mode', 'survivor')
     localStorage.setItem('essd_game_subjects', JSON.stringify([Number(selectedSubjectId)]))
     navigate('/games/survivor/play')

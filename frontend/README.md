@@ -71,6 +71,7 @@ Endpoints usados:
 - Modo Survivor: o jogo termina ao errar uma única questão.
 - O quizz só aparece após clicar em "Começar" no modal de orientação.
 - Refresh/fechar com o modal aberto não gera penalidade.
+- Quando houver apenas um quizz disponível, ele continua sendo exibido (sem bloqueio por exclusão).
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.
