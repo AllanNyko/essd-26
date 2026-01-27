@@ -16,6 +16,7 @@ const GamesIndividualPlay = () => {
   const timeoutHandled = useRef(false)
   const [resettingTimer, setResettingTimer] = useState(false)
   const timerRef = useRef(null)
+  const sessionRef = useRef(null)
 
   const loadQuiz = async (excludeIds = []) => {
     setLoading(true)
@@ -53,6 +54,52 @@ const GamesIndividualPlay = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const registerSession = async (nextQuiz) => {
+    const storedUser = localStorage.getItem('essd_user')
+    const currentUser = storedUser ? JSON.parse(storedUser) : null
+    const userId = currentUser?.id
+
+    if (!nextQuiz?.id || !userId) {
+      return
+    }
+
+    await fetch(`${API_BASE_URL}/game-sessions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        user_id: Number(userId),
+        quiz_id: nextQuiz.id,
+        mode: 'individual',
+        time_left: 20,
+      }),
+    })
+
+    sessionRef.current = {
+      userId: Number(userId),
+      quizId: nextQuiz.id,
+      mode: 'individual',
+    }
+  }
+
+  const closeSession = async (timeLeftValue) => {
+    if (!sessionRef.current) return
+    const payload = {
+      user_id: sessionRef.current.userId,
+      quiz_id: sessionRef.current.quizId,
+      mode: sessionRef.current.mode,
+      time_left: typeof timeLeftValue === 'number' ? timeLeftValue : timeLeft,
+    }
+
+    await fetch(`${API_BASE_URL}/game-sessions/close`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    })
+
+    sessionRef.current = null
   }
 
   useEffect(() => {
@@ -93,6 +140,8 @@ const GamesIndividualPlay = () => {
 
     localStorage.setItem('essd_last_quiz_id', String(quiz.id))
 
+    registerSession(quiz)
+
     timeoutHandled.current = false
     setTimeLeft(20)
     setResettingTimer(true)
@@ -102,6 +151,17 @@ const GamesIndividualPlay = () => {
     setTimedOut(false)
     requestAnimationFrame(() => setResettingTimer(false))
   }, [quiz])
+
+  useEffect(() => {
+    const handleUnload = () => {
+      if (!locked && quiz && !timedOut) {
+        closeSession(timeLeft)
+      }
+    }
+
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [locked, quiz, timedOut, timeLeft])
 
   useEffect(() => {
     if (!quiz || showIntro || locked) {
@@ -165,6 +225,7 @@ const GamesIndividualPlay = () => {
     setTimedOut(true)
     setResult('wrong')
     sendAnswer({ selected: '', timedOut: true, timeLeft: 0 })
+    closeSession(0)
   }
 
   const handleNext = () => {
@@ -189,6 +250,7 @@ const GamesIndividualPlay = () => {
     const isCorrect = option === quiz.option_one
     setResult(isCorrect ? 'correct' : 'wrong')
     sendAnswer({ selected: option, timedOut: false, timeLeft })
+    closeSession(timeLeft)
   }
 
   const options = useMemo(() => {

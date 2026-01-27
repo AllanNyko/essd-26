@@ -63,6 +63,8 @@ Endpoints usados:
 - Atualizar pontuação: `PATCH /scores`
 - Próximo quizz (jogo): `GET /quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /quizzes/{id}/answer`
+- Iniciar sessão de jogo: `POST /game-sessions`
+- Encerrar sessão de jogo: `POST /game-sessions/close`
 
 ### Regras do jogo
 - Apenas quizzes validados (>= 3 validações) e sem revisão são usados no jogo.

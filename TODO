@@ -1,0 +1,3 @@
+# TODO
+
+- Implementar um cron para verificar sessões ativas em `game_sessions` que expiraram e computar os erros/pontuação do usuário correspondente.

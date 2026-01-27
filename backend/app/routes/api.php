@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserScoreController;
+use App\Http\Controllers\Api\GameSessionController;
 use Illuminate\Support\Facades\Route;
 Route::get('/health', function () {
     return response()->json([
@@ -50,6 +51,10 @@ Route::delete('/plans/{plan}', [PlanController::class, 'destroy']);
 
 Route::get('/notes', [NoteController::class, 'index']);
 Route::post('/notes', [NoteController::class, 'store']);
+
+Route::post('/game-sessions', [GameSessionController::class, 'store']);
+Route::post('/game-sessions/close', [GameSessionController::class, 'close']);
+Route::post('/game-sessions/expire', [GameSessionController::class, 'expire']);
 
 Route::post('/quizzes', [QuizController::class, 'store']);
 Route::get('/quizzes/next', [QuizController::class, 'next']);
