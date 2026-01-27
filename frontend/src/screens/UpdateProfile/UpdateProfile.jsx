@@ -90,12 +90,16 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     setStatus({ loading: true, error: '', success: '' })
 
     if (!form.id) {
-      setStatus({ loading: false, error: 'Informe o ID do usuário.', success: '' })
+      const message = 'Informe o ID do usuário.'
+      setStatus({ loading: false, error: message, success: '' })
+      setModal({ open: true, type: 'error', message })
       return
     }
 
     if (form.password && form.password !== form.password_confirmation) {
-      setStatus({ loading: false, error: 'As senhas não conferem.', success: '' })
+      const message = 'As senhas não conferem.'
+      setStatus({ loading: false, error: message, success: '' })
+      setModal({ open: true, type: 'error', message })
       return
     }
 
@@ -188,6 +192,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
           value={form.password}
           onChange={handleChange}
           required={false}
+          autoComplete="new-password"
         />
         <Input
           label="Confirmar nova senha"
@@ -197,6 +202,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
           value={form.password_confirmation}
           onChange={handleChange}
           required={false}
+          autoComplete="new-password"
         />
       </FormCard>
       {modal.open && (
