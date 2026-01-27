@@ -3,6 +3,7 @@
 - Implementar um cron para verificar sessões ativas em `game_sessions` que expiraram e computar os erros/pontuação do usuário correspondente.
 - [feito] Na tela do gameplay deverá ser exibido somente a mensagem sobre o jogo, conforme já existe no modal. Após o usuário clicar para começar o jogo o elemento html do card com o quizz deverá ser criado. Isso evita que o usuário burle inicialmente a regra do jogo usando o inspecionar do console. Quando ele clicar e começar o tempo dele já esta correndo e se ele der um refresh na pagina será penalizado.
 - [feito] Remover punição caso o usuário saia ou de refresh estando na tela ainda com o modal aberto. Pois já que ele não consegue ver o quizz não há vantagens para ele.
+- [feito] Atualmente quando um usuário chega ao fim dos quizzes disponiveis para o respectivo modo ele vê a seguint mensagem: "Sem perguntas Não há quizzes disponíveis para o modo individual." Para este cenário devemos apresentar uma outra mensagem. Um modal dizendo algo como parabéns por ter chegado até aqui. Sua taxa de acerto é x% nesse modo. Esgotamos os quizess disponivel para esta rodada. Comece um novo jogo para responder as perguntas novamente. Novos quizzes são atualizados conforme forem validados.  Algo assim sabe.
 
 
 
@@ -10,4 +11,6 @@
 
 # bugs
 
-- Trocar o comportamento nas telas de jogo, onde o usuário não poderá iniciar um novo jogo a partir da tela de finalização. Ele deverá ser redireciondo para a tela onde escolherá o modo de jogo e poderá começar o fluxo novamente até iniciar um novo jogo.
+- [feito] Trocar o comportamento nas telas de jogo, onde o usuário não poderá iniciar um novo jogo a partir da tela de finalização. Ele deverá ser redireciondo para a tela onde escolherá o modo de jogo e poderá começar o fluxo novamente até iniciar um novo jogo.
+- [feito] Na tela de selecção onde o usuario irá escolher jogar materia especifica ou multiplas caterias exiba somente as opções que tiverem quizzes validos para elas. Oculte as materias que não tenham um quizz atrelado a si. Talvez precise modificar a estrutura de tabela ou criar uma nova com vinculos.
+

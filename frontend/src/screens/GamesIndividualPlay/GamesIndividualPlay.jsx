@@ -107,10 +107,11 @@ const GamesIndividualPlay = () => {
 
   const handleStart = () => {
     setShowIntro(false)
-    if (!quiz && !loading) {
-      loadQuiz()
-    }
   }
+  useEffect(() => {
+    loadQuiz()
+  }, [])
+
 
   useEffect(() => {
     let active = true
@@ -185,6 +186,10 @@ const GamesIndividualPlay = () => {
 
     localStorage.setItem('essd_last_quiz_id', String(quiz.id))
 
+    if (showIntro) {
+      return
+    }
+
     registerSession(quiz)
 
     timeoutHandled.current = false
@@ -195,7 +200,7 @@ const GamesIndividualPlay = () => {
     setResult('')
     setTimedOut(false)
     requestAnimationFrame(() => setResettingTimer(false))
-  }, [quiz])
+  }, [quiz, showIntro])
 
   useEffect(() => {
     const handleUnload = () => {
@@ -335,14 +340,7 @@ const GamesIndividualPlay = () => {
 
           {loading && <div className="quiz-loading">Carregando...</div>}
 
-          {!loading && !quiz && (
-            <div className="card">
-              <div className="card-header">
-                <h2>Sem perguntas</h2>
-                <p>Não há quizzes disponíveis para o modo individual.</p>
-              </div>
-            </div>
-          )}
+          {!loading && !quiz && null}
 
           {!loading && quiz && (
             <div className="quiz-card">
@@ -386,7 +384,7 @@ const GamesIndividualPlay = () => {
           <div className="game-modal" role="dialog" aria-modal="true">
             <h3>Antes de começar</h3>
             <p>Você responderá um quizz com base nas matérias selecionadas. Leia com atenção e escolha a melhor opção.</p>
-            <p><strong>Taxa de acertos:</strong> {accuracy}%</p>
+            <p><strong>Taxa de acertos no Modo Individual:</strong> {accuracy}%</p>
             <p><strong>Pontuação total (modo individual):</strong> {userStats.points}</p>
             <div className="survivor-actions">
               <button type="button" className="ghost" onClick={() => navigate('/games/individual')}>
@@ -394,6 +392,22 @@ const GamesIndividualPlay = () => {
               </button>
               <button type="button" className="primary" onClick={handleStart}>
                 Começar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!showIntro && !loading && !quiz && (
+        <div className="game-modal-backdrop" role="presentation">
+          <div className="game-modal" role="dialog" aria-modal="true">
+            <h3>Parabéns!</h3>
+            <p>Você chegou ao fim dos quizzes disponíveis nesta rodada.</p>
+            <p><strong>Sua taxa de acerto no Modo Individual:</strong> {accuracy}%</p>
+            <p>Comece um novo jogo para responder novamente. Novos quizzes aparecem conforme são validados.</p>
+            <div className="survivor-actions">
+              <button type="button" className="primary" onClick={() => navigate('/games/individual')}>
+                Voltar
               </button>
             </div>
           </div>

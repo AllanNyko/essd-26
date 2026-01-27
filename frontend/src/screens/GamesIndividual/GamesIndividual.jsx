@@ -15,7 +15,7 @@ const GamesIndividual = () => {
 
     const loadSubjects = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/subjects`, {
+        const response = await fetch(`${API_BASE_URL}/subjects?only_with_quizzes=1`, {
           headers: { 'Accept': 'application/json' },
         })
         const data = await parseJson(response)

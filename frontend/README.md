@@ -39,7 +39,7 @@ Endpoints usados:
 - Recuperar senha: `POST /auth/forgot-password`
 - Atualizar usuário: `PATCH /users/{id}`
 - Upload de materiais: `POST /materials/upload` (multipart/form-data)
-- Listar matérias: `GET /subjects`
+- Listar matérias: `GET /subjects` (use `only_with_quizzes=1` para jogos)
 - Cadastrar matéria: `POST /subjects`
 - Detalhar matéria: `GET /subjects/{id}`
 - Atualizar matéria: `PATCH /subjects/{id}`

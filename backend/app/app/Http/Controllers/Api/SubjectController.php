@@ -7,13 +7,25 @@ use App\Http\Requests\SubjectStoreRequest;
 use App\Http\Requests\SubjectUpdateRequest;
 use App\Models\Subject;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $onlyWithQuizzes = (bool) $request->query('only_with_quizzes');
+
+        $query = Subject::query()->orderBy('name');
+
+        if ($onlyWithQuizzes) {
+            $query->whereHas('quizzes', function ($builder) {
+                $builder->where('needs_review', false)
+                    ->where('validations_count', '>=', 3);
+            });
+        }
+
         return response()->json([
-            'subjects' => Subject::query()->orderBy('name')->get(['id', 'name']),
+            'subjects' => $query->get(['id', 'name']),
         ]);
     }
 

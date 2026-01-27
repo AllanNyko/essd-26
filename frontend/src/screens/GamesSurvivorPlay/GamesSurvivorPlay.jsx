@@ -109,10 +109,11 @@ const GamesSurvivorPlay = () => {
 
   const handleStart = () => {
     setShowIntro(false)
-    if (!quiz && !loading) {
-      loadQuiz()
-    }
   }
+  useEffect(() => {
+    loadQuiz()
+  }, [])
+
 
   useEffect(() => {
     let active = true
@@ -187,6 +188,10 @@ const GamesSurvivorPlay = () => {
 
     localStorage.setItem('essd_last_quiz_id', String(quiz.id))
 
+    if (showIntro) {
+      return
+    }
+
     registerSession(quiz)
 
     timeoutHandled.current = false
@@ -197,7 +202,7 @@ const GamesSurvivorPlay = () => {
     setResult('')
     setTimedOut(false)
     requestAnimationFrame(() => setResettingTimer(false))
-  }, [quiz])
+  }, [quiz, showIntro])
 
   useEffect(() => {
     const handleUnload = () => {
@@ -363,14 +368,7 @@ const GamesSurvivorPlay = () => {
 
           {loading && <div className="quiz-loading">Carregando...</div>}
 
-          {!loading && !quiz && !gameOver && (
-            <div className="card">
-              <div className="card-header">
-                <h2>Sem perguntas</h2>
-                <p>Não há quizzes disponíveis para o modo survivor.</p>
-              </div>
-            </div>
-          )}
+          {!loading && !quiz && !gameOver && null}
 
           {!loading && quiz && (
             <div className="quiz-card">
@@ -423,7 +421,7 @@ const GamesSurvivorPlay = () => {
           <div className="game-modal" role="dialog" aria-modal="true">
             <h3>Antes de começar</h3>
             <p>Você responderá um quizz com base nas matérias selecionadas. Errou uma, o jogo termina.</p>
-            <p><strong>Taxa de acertos:</strong> {accuracy}%</p>
+            <p><strong>Taxa de acertos no Modo Survivor:</strong> {accuracy}%</p>
             <p><strong>Pontuação total (modo survivor):</strong> {userStats.points}</p>
             <div className="survivor-actions">
               <button type="button" className="ghost" onClick={() => navigate('/games/survivor')}>
@@ -446,8 +444,21 @@ const GamesSurvivorPlay = () => {
               <button type="button" className="ghost" onClick={() => navigate('/games')}>
                 Voltar
               </button>
-              <button type="button" className="primary" onClick={handleRestart}>
-                Jogar novamente
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!showIntro && !loading && !quiz && !gameOver && (
+        <div className="game-modal-backdrop" role="presentation">
+          <div className="game-modal" role="dialog" aria-modal="true">
+            <h3>Parabéns!</h3>
+            <p>Você chegou ao fim dos quizzes disponíveis nesta rodada.</p>
+            <p><strong>Sua taxa de acerto no Modo Survivor:</strong> {accuracy}%</p>
+            <p>Comece um novo jogo para responder novamente. Novos quizzes aparecem conforme são validados.</p>
+            <div className="survivor-actions">
+              <button type="button" className="primary" onClick={() => navigate('/games/survivor')}>
+                Voltar
               </button>
             </div>
           </div>

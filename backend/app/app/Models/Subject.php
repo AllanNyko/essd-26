@@ -18,4 +18,9 @@ class Subject extends Model
     {
         return $this->hasMany(Material::class);
     }
+
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class);
+    }
 }

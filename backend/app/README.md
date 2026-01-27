@@ -14,7 +14,7 @@
 - Iniciar sessão de jogo: `POST /api/game-sessions`
 - Encerrar sessão de jogo: `POST /api/game-sessions/close`
 - Expirar sessões de jogo: `POST /api/game-sessions/expire`
-- Listar matérias: `GET /api/subjects`
+- Listar matérias: `GET /api/subjects` (use `only_with_quizzes=1` para jogos)
 - Cadastrar matéria: `POST /api/subjects`
 - Detalhar matéria: `GET /api/subjects/{id}`
 - Atualizar matéria: `PATCH /api/subjects/{id}`
