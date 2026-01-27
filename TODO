@@ -1,3 +1,13 @@
 # TODO
 
 - Implementar um cron para verificar sessões ativas em `game_sessions` que expiraram e computar os erros/pontuação do usuário correspondente.
+- [feito] Na tela do gameplay deverá ser exibido somente a mensagem sobre o jogo, conforme já existe no modal. Após o usuário clicar para começar o jogo o elemento html do card com o quizz deverá ser criado. Isso evita que o usuário burle inicialmente a regra do jogo usando o inspecionar do console. Quando ele clicar e começar o tempo dele já esta correndo e se ele der um refresh na pagina será penalizado.
+- [feito] Remover punição caso o usuário saia ou de refresh estando na tela ainda com o modal aberto. Pois já que ele não consegue ver o quizz não há vantagens para ele.
+
+
+
+
+
+# bugs
+
+- Trocar o comportamento nas telas de jogo, onde o usuário não poderá iniciar um novo jogo a partir da tela de finalização. Ele deverá ser redireciondo para a tela onde escolherá o modo de jogo e poderá começar o fluxo novamente até iniciar um novo jogo.

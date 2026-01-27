@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './GamesIndividualPlay.css'
 
 const GamesIndividualPlay = () => {
+  const navigate = useNavigate()
   const [showIntro, setShowIntro] = useState(true)
   const [quiz, setQuiz] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -17,6 +19,7 @@ const GamesIndividualPlay = () => {
   const [resettingTimer, setResettingTimer] = useState(false)
   const timerRef = useRef(null)
   const sessionRef = useRef(null)
+  const [userStats, setUserStats] = useState({ hits: 0, errors: 0, points: 0 })
 
   const loadQuiz = async (excludeIds = []) => {
     setLoading(true)
@@ -102,9 +105,12 @@ const GamesIndividualPlay = () => {
     sessionRef.current = null
   }
 
-  useEffect(() => {
-    loadQuiz()
-  }, [])
+  const handleStart = () => {
+    setShowIntro(false)
+    if (!quiz && !loading) {
+      loadQuiz()
+    }
+  }
 
   useEffect(() => {
     let active = true
@@ -134,6 +140,45 @@ const GamesIndividualPlay = () => {
   }, [])
 
   useEffect(() => {
+    let active = true
+
+    const loadStats = async () => {
+      const storedUser = localStorage.getItem('essd_user')
+      const currentUser = storedUser ? JSON.parse(storedUser) : null
+      const userId = currentUser?.id
+
+      if (!userId) {
+        return
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/scores?user_id=${userId}`, {
+          headers: { 'Accept': 'application/json' },
+        })
+        const data = await parseJson(response)
+
+        if (response.ok && active) {
+          setUserStats({
+            hits: data?.score?.individual_hits || 0,
+            errors: data?.score?.individual_errors || 0,
+            points: data?.score?.individual_points || 0,
+          })
+        }
+      } catch {
+        if (active) {
+          setUserStats({ hits: 0, errors: 0, points: 0 })
+        }
+      }
+    }
+
+    loadStats()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
     if (!quiz) {
       return
     }
@@ -154,14 +199,14 @@ const GamesIndividualPlay = () => {
 
   useEffect(() => {
     const handleUnload = () => {
-      if (!locked && quiz && !timedOut) {
+      if (!showIntro && !locked && quiz && !timedOut) {
         closeSession(timeLeft)
       }
     }
 
     window.addEventListener('beforeunload', handleUnload)
     return () => window.removeEventListener('beforeunload', handleUnload)
-  }, [locked, quiz, timedOut, timeLeft])
+  }, [showIntro, locked, quiz, timedOut, timeLeft])
 
   useEffect(() => {
     if (!quiz || showIntro || locked) {
@@ -269,6 +314,8 @@ const GamesIndividualPlay = () => {
   const progress = timeLeft <= 0 ? 0 : Math.max(0, Math.min(100, (timeLeft / 20) * 100))
   const timerClass = timeLeft <= 5 ? 'danger' : timeLeft <= 10 ? 'warning' : 'safe'
   const timerResetClass = resettingTimer || timeLeft >= 20 || timeLeft <= 0 ? 'resetting' : ''
+  const totalAttempts = userStats.hits + userStats.errors
+  const accuracy = totalAttempts > 0 ? Math.round((userStats.hits / totalAttempts) * 100) : 0
 
   return (
     <section className="games-play">
@@ -277,57 +324,61 @@ const GamesIndividualPlay = () => {
         <p>Responda às perguntas no seu ritmo.</p>
       </header>
 
-      <div className="quiz-timer">
-        <div
-          className={`quiz-timer-fill ${timerClass} ${timerResetClass}`}
-          style={{ transform: `scaleX(${progress / 100})` }}
-        />
-      </div>
-
-      {loading && <div className="quiz-loading">Carregando...</div>}
-
-      {!loading && !quiz && (
-        <div className="card">
-          <div className="card-header">
-            <h2>Sem perguntas</h2>
-            <p>Não há quizzes disponíveis para o modo individual.</p>
+      {!showIntro && (
+        <>
+          <div className="quiz-timer">
+            <div
+              className={`quiz-timer-fill ${timerClass} ${timerResetClass}`}
+              style={{ transform: `scaleX(${progress / 100})` }}
+            />
           </div>
-        </div>
-      )}
 
-      {!loading && quiz && (
-        <div className="quiz-card">
-          <div className="quiz-card-header">
-            <div className="quiz-meta">
-              <span className="quiz-badge">#{quiz.id}</span>
-              <span className="quiz-meta-item"> {subjectName || `#${quiz.subject_id}`}</span>
-              <span className="quiz-meta-item">Dificuldade: {quiz.difficulty_label || 'Fácil'}</span>
+          {loading && <div className="quiz-loading">Carregando...</div>}
+
+          {!loading && !quiz && (
+            <div className="card">
+              <div className="card-header">
+                <h2>Sem perguntas</h2>
+                <p>Não há quizzes disponíveis para o modo individual.</p>
+              </div>
             </div>
-            <h3>{quiz.question}</h3>
-          </div>
-          <div className="quiz-options">
-            {options.map((option) => {
-              const isSelected = option === selectedOption
-              const isWrong = (timedOut && result === 'wrong') || (result === 'wrong' && isSelected)
-              const isCorrect = result === 'correct' && isSelected
+          )}
 
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  className={`quiz-option ${isWrong ? 'wrong' : ''} ${isCorrect ? 'correct' : ''}`}
-                  onClick={() => handleSelect(option)}
-                  disabled={locked}
-                >
-                  {option}
-                </button>
-              )
-            })}
-          </div>
-          <button type="button" className="primary" onClick={handleNext} disabled={!selectedOption && !timedOut}>
-            Próxima
-          </button>
-        </div>
+          {!loading && quiz && (
+            <div className="quiz-card">
+              <div className="quiz-card-header">
+                <div className="quiz-meta">
+                  <span className="quiz-badge">#{quiz.id}</span>
+                  <span className="quiz-meta-item"> {subjectName || `#${quiz.subject_id}`}</span>
+                  <span className="quiz-meta-item">Dificuldade: {quiz.difficulty_label || 'Fácil'}</span>
+                </div>
+                <h3>{quiz.question}</h3>
+              </div>
+              <div className="quiz-options">
+                {options.map((option) => {
+                  const isSelected = option === selectedOption
+                  const isWrong = (timedOut && result === 'wrong') || (result === 'wrong' && isSelected)
+                  const isCorrect = result === 'correct' && isSelected
+
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      className={`quiz-option ${isWrong ? 'wrong' : ''} ${isCorrect ? 'correct' : ''}`}
+                      onClick={() => handleSelect(option)}
+                      disabled={locked}
+                    >
+                      {option}
+                    </button>
+                  )
+                })}
+              </div>
+              <button type="button" className="primary" onClick={handleNext} disabled={!selectedOption && !timedOut}>
+                Próxima
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {showIntro && (
@@ -335,9 +386,16 @@ const GamesIndividualPlay = () => {
           <div className="game-modal" role="dialog" aria-modal="true">
             <h3>Antes de começar</h3>
             <p>Você responderá um quizz com base nas matérias selecionadas. Leia com atenção e escolha a melhor opção.</p>
-            <button type="button" className="primary" onClick={() => setShowIntro(false)}>
-              Começar
-            </button>
+            <p><strong>Taxa de acertos:</strong> {accuracy}%</p>
+            <p><strong>Pontuação total (modo individual):</strong> {userStats.points}</p>
+            <div className="survivor-actions">
+              <button type="button" className="ghost" onClick={() => navigate('/games/individual')}>
+                Sair
+              </button>
+              <button type="button" className="primary" onClick={handleStart}>
+                Começar
+              </button>
+            </div>
           </div>
         </div>
       )}

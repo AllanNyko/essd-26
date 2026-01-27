@@ -69,6 +69,8 @@ Endpoints usados:
 ### Regras do jogo
 - Apenas quizzes validados (>= 3 validações) e sem revisão são usados no jogo.
 - Modo Survivor: o jogo termina ao errar uma única questão.
+- O quizz só aparece após clicar em "Começar" no modal de orientação.
+- Refresh/fechar com o modal aberto não gera penalidade.
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.
