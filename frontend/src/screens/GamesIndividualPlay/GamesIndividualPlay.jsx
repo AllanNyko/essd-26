@@ -130,7 +130,7 @@ const GamesIndividualPlay = () => {
     }
   }, [timeLeft, quiz, showIntro, locked])
 
-  const sendAnswer = async ({ selected, timedOut: isTimedOut }) => {
+  const sendAnswer = async ({ selected, timedOut: isTimedOut, timeLeft: remainingTime }) => {
     const storedUser = localStorage.getItem('essd_user')
     const currentUser = storedUser ? JSON.parse(storedUser) : null
     const userId = currentUser?.id
@@ -146,6 +146,8 @@ const GamesIndividualPlay = () => {
         user_id: Number(userId),
         selected_option: selected || null,
         timed_out: isTimedOut || false,
+        game_mode: 'individual',
+        time_left: typeof remainingTime === 'number' ? remainingTime : timeLeft,
       }),
     })
   }
@@ -162,7 +164,7 @@ const GamesIndividualPlay = () => {
     setLocked(true)
     setTimedOut(true)
     setResult('wrong')
-    sendAnswer({ selected: '', timedOut: true })
+    sendAnswer({ selected: '', timedOut: true, timeLeft: 0 })
   }
 
   const handleNext = () => {
@@ -186,7 +188,7 @@ const GamesIndividualPlay = () => {
     setSelectedOption(option)
     const isCorrect = option === quiz.option_one
     setResult(isCorrect ? 'correct' : 'wrong')
-    sendAnswer({ selected: option, timedOut: false })
+    sendAnswer({ selected: option, timedOut: false, timeLeft })
   }
 
   const options = useMemo(() => {

@@ -177,7 +177,9 @@ Retorna array de matérias com `id` e `name`.
 {
 	"user_id": 1,
 	"selected_option": "Alternativa correta",
-	"timed_out": false
+	"timed_out": false,
+	"game_mode": "individual",
+	"time_left": 12
 }
 ```
 
@@ -188,6 +190,12 @@ Retorna array de matérias com `id` e `name`.
 - `needs_review`: indica revisão após 5 invalidações.
 - `accuracy_percentage`: porcentagem de acertos calculada com `(hits / (hits + errors)) * 100`.
 - `difficulty_label`: classificação baseada na porcentagem (Difícil < 30%, Média >= 30% e < 70%, Fácil >= 70%).
+
+## Pontuação do usuário
+- `quiz_points`: soma geral de pontos em quizzes.
+- `individual_hits` / `individual_errors`: acertos e erros no modo individual.
+- `survivor_hits` / `survivor_errors`: acertos e erros no modo survivor.
+- `individual_points` / `survivor_points`: pontos acumulados por modo.
 
 ## Regras de jogo
 - O modo de jogo usa apenas quizzes validados (>= 3 validações) e sem revisão.

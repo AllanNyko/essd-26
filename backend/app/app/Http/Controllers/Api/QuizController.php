@@ -8,6 +8,7 @@ use App\Http\Requests\QuizValidateRequest;
 use App\Http\Requests\QuizStoreRequest;
 use App\Models\Quiz;
 use App\Models\QuizValidation;
+use App\Models\UserScore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -161,11 +162,25 @@ class QuizController extends Controller
     {
         $data = $request->validated();
         $timedOut = (bool) ($data['timed_out'] ?? false);
+        $gameMode = $data['game_mode'];
+        $timeLeft = isset($data['time_left']) ? (int) $data['time_left'] : 0;
+        $timeLeft = max(0, min(20, $timeLeft));
+        $userId = (int) $data['user_id'];
+
+        $score = UserScore::firstOrCreate([
+            'user_id' => $userId,
+        ]);
 
         if ($timedOut) {
             $quiz->increment('errors');
             $quiz->refresh();
             $quiz->recalculateDifficulty();
+
+            if ($gameMode === 'survivor') {
+                $score->increment('survivor_errors');
+            } else {
+                $score->increment('individual_errors');
+            }
 
             return response()->json([
                 'message' => 'Tempo esgotado. Questão registrada como errada.',
@@ -183,6 +198,33 @@ class QuizController extends Controller
 
         $quiz->refresh();
         $quiz->recalculateDifficulty();
+
+        if ($isCorrect) {
+            $basePoints = $gameMode === 'survivor' ? 15 : 10;
+            $difficultyMultiplier = match ($quiz->difficulty_label) {
+                'Difícil' => 1.4,
+                'Média' => 1.2,
+                default => 1.0,
+            };
+            $bonus = (int) floor(($timeLeft / 20) * 5);
+            $points = (int) round($basePoints * $difficultyMultiplier + $bonus);
+
+            if ($gameMode === 'survivor') {
+                $score->increment('survivor_hits');
+                $score->increment('survivor_points', $points);
+            } else {
+                $score->increment('individual_hits');
+                $score->increment('individual_points', $points);
+            }
+
+            $score->increment('quiz_points', $points);
+        } else {
+            if ($gameMode === 'survivor') {
+                $score->increment('survivor_errors');
+            } else {
+                $score->increment('individual_errors');
+            }
+        }
 
         return response()->json([
             'message' => $isCorrect ? 'Resposta correta.' : 'Resposta incorreta.',

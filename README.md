@@ -41,3 +41,4 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-26: Próximo quizz do jogo ignora IDs já respondidos.
 - 2026-01-26: Tabela de pontuação por usuário com pontos de quizzes e contribuições.
 - 2026-01-27: Quizzes agora armazenam porcentagem de acertos e dificuldade calculada.
+- 2026-01-27: Pontuação por modo (individual/survivor) e bônus por tempo em quizzes.

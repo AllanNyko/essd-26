@@ -17,6 +17,8 @@ class QuizAnswerRequest extends FormRequest
             'user_id' => ['required', 'integer', 'exists:users,id'],
             'selected_option' => ['nullable', 'string'],
             'timed_out' => ['sometimes', 'boolean'],
+            'game_mode' => ['required', 'string', 'in:individual,survivor'],
+            'time_left' => ['nullable', 'integer', 'min:0', 'max:20'],
         ];
     }
 }

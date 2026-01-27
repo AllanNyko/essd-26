@@ -134,7 +134,7 @@ const GamesSurvivorPlay = () => {
     }
   }, [timeLeft, quiz, showIntro, locked, gameOver])
 
-  const sendAnswer = async ({ selected, timedOut: isTimedOut }) => {
+  const sendAnswer = async ({ selected, timedOut: isTimedOut, timeLeft: remainingTime }) => {
     const storedUser = localStorage.getItem('essd_user')
     const currentUser = storedUser ? JSON.parse(storedUser) : null
     const userId = currentUser?.id
@@ -150,6 +150,8 @@ const GamesSurvivorPlay = () => {
         user_id: Number(userId),
         selected_option: selected || null,
         timed_out: isTimedOut || false,
+        game_mode: 'survivor',
+        time_left: typeof remainingTime === 'number' ? remainingTime : timeLeft,
       }),
     })
   }
@@ -170,7 +172,7 @@ const GamesSurvivorPlay = () => {
     timeoutHandled.current = true
     setTimedOut(true)
     setResult('wrong')
-    sendAnswer({ selected: '', timedOut: true })
+    sendAnswer({ selected: '', timedOut: true, timeLeft: 0 })
     endGame()
   }
 
@@ -198,7 +200,7 @@ const GamesSurvivorPlay = () => {
     setSelectedOption(option)
     const isCorrect = option === quiz.option_one
     setResult(isCorrect ? 'correct' : 'wrong')
-    sendAnswer({ selected: option, timedOut: false })
+    sendAnswer({ selected: option, timedOut: false, timeLeft })
 
     if (isCorrect) {
       setCorrectCount((prev) => prev + 1)

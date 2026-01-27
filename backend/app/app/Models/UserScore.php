@@ -14,6 +14,12 @@ class UserScore extends Model
         'user_id',
         'quiz_points',
         'contribution_points',
+        'individual_hits',
+        'individual_errors',
+        'survivor_hits',
+        'survivor_errors',
+        'individual_points',
+        'survivor_points',
     ];
 
     public function user(): BelongsTo
