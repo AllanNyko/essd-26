@@ -39,3 +39,4 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-26: Modo individual com timer e registro de acertos/erros.
 - 2026-01-26: Jogo usa apenas quizzes validados e sem revisão.
 - 2026-01-26: Próximo quizz do jogo ignora IDs já respondidos.
+- 2026-01-26: Tabela de pontuação por usuário com pontos de quizzes e contribuições.

@@ -28,6 +28,8 @@
 - Excluir plano: `DELETE /api/plans/{id}`
 - Listar notas: `GET /api/notes?user_id={id}`
 - Cadastrar nota: `POST /api/notes`
+- Consultar pontuação: `GET /api/scores?user_id={id}`
+- Atualizar pontuação: `PATCH /api/scores`
 
 ### Exclusão
 - Os endpoints `DELETE` removem o registro definitivamente.

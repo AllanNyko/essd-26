@@ -34,7 +34,21 @@ const GamesIndividualPlay = () => {
         headers: { 'Accept': 'application/json' },
       })
       const data = await parseJson(response)
-      setQuiz(data?.quiz || null)
+      const nextQuiz = data?.quiz || null
+
+      const lastQuizId = Number(localStorage.getItem('essd_last_quiz_id') || 0)
+      const shouldRetry =
+        nextQuiz?.id &&
+        lastQuizId &&
+        nextQuiz.id === lastQuizId &&
+        excludeIds.length === 0
+
+      if (shouldRetry) {
+        await loadQuiz([lastQuizId])
+        return
+      }
+
+      setQuiz(nextQuiz)
     } finally {
       setLoading(false)
     }
@@ -48,6 +62,8 @@ const GamesIndividualPlay = () => {
     if (!quiz) {
       return
     }
+
+    localStorage.setItem('essd_last_quiz_id', String(quiz.id))
 
     timeoutHandled.current = false
     setTimeLeft(20)

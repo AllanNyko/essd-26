@@ -57,6 +57,8 @@ Endpoints usados:
 - Validar quizz: `POST /quizzes/{id}/validate`
 - Listar notas: `GET /notes?user_id={id}`
 - Cadastrar nota: `POST /notes`
+- Consultar pontuação: `GET /scores?user_id={id}`
+- Atualizar pontuação: `PATCH /scores`
 - Próximo quizz (jogo): `GET /quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /quizzes/{id}/answer`
 

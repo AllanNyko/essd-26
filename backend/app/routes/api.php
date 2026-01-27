@@ -8,14 +8,17 @@ use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\QuizController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\UserScoreController;
 use Illuminate\Support\Facades\Route;
-
 Route::get('/health', function () {
     return response()->json([
         'status' => 'ok',
         'service' => 'backend',
     ]);
 })->name('health');
+
+Route::get('/scores', [UserScoreController::class, 'show']);
+Route::patch('/scores', [UserScoreController::class, 'update']);
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

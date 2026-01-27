@@ -7,6 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Models\UserScore;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -24,6 +25,10 @@ class AuthController extends Controller
             'plan_id' => $data['plan_id'],
             'notice_id' => $data['notice_id'] ?? null,
             'password' => $data['password'],
+        ]);
+
+        UserScore::create([
+            'user_id' => $user->id,
         ]);
 
         return response()->json([
