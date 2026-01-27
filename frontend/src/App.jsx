@@ -24,6 +24,8 @@ import NotesCenter from './screens/NotesCenter/NotesCenter'
 import GamesCenter from './screens/GamesCenter/GamesCenter'
 import GamesIndividual from './screens/GamesIndividual/GamesIndividual'
 import GamesIndividualPlay from './screens/GamesIndividualPlay/GamesIndividualPlay'
+import GamesSurvivor from './screens/GamesSurvivor/GamesSurvivor'
+import GamesSurvivorPlay from './screens/GamesSurvivorPlay/GamesSurvivorPlay'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -124,6 +126,8 @@ function App() {
               <Route path="/games" element={<GamesCenter />} />
               <Route path="/games/individual" element={<GamesIndividual />} />
               <Route path="/games/individual/play" element={<GamesIndividualPlay />} />
+              <Route path="/games/survivor" element={<GamesSurvivor />} />
+              <Route path="/games/survivor/play" element={<GamesSurvivorPlay />} />
             </Route>
             <Route
               path="*"

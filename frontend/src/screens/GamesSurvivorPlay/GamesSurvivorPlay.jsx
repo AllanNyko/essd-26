@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL, parseJson } from '../../lib/api'
-import './GamesIndividualPlay.css'
+import './GamesSurvivorPlay.css'
 
-const GamesIndividualPlay = () => {
+const GamesSurvivorPlay = () => {
+  const navigate = useNavigate()
   const [showIntro, setShowIntro] = useState(true)
   const [quiz, setQuiz] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -13,6 +15,8 @@ const GamesIndividualPlay = () => {
   const [result, setResult] = useState('')
   const [timedOut, setTimedOut] = useState(false)
   const [answeredIds, setAnsweredIds] = useState([])
+  const [gameOver, setGameOver] = useState(false)
+  const [correctCount, setCorrectCount] = useState(0)
   const timeoutHandled = useRef(false)
   const [resettingTimer, setResettingTimer] = useState(false)
   const timerRef = useRef(null)
@@ -104,7 +108,7 @@ const GamesIndividualPlay = () => {
   }, [quiz])
 
   useEffect(() => {
-    if (!quiz || showIntro || locked) {
+    if (!quiz || showIntro || locked || gameOver) {
       return
     }
 
@@ -118,17 +122,17 @@ const GamesIndividualPlay = () => {
         timerRef.current = null
       }
     }
-  }, [quiz, showIntro, locked])
+  }, [quiz, showIntro, locked, gameOver])
 
   useEffect(() => {
-    if (!quiz || showIntro || locked || timeoutHandled.current) {
+    if (!quiz || showIntro || locked || timeoutHandled.current || gameOver) {
       return
     }
 
     if (timeLeft === 0) {
       handleTimeout()
     }
-  }, [timeLeft, quiz, showIntro, locked])
+  }, [timeLeft, quiz, showIntro, locked, gameOver])
 
   const sendAnswer = async ({ selected, timedOut: isTimedOut }) => {
     const storedUser = localStorage.getItem('essd_user')
@@ -150,6 +154,11 @@ const GamesIndividualPlay = () => {
     })
   }
 
+  const endGame = () => {
+    setGameOver(true)
+    setLocked(true)
+  }
+
   const handleTimeout = () => {
     if (timeoutHandled.current || locked) {
       return
@@ -159,13 +168,16 @@ const GamesIndividualPlay = () => {
       timerRef.current = null
     }
     timeoutHandled.current = true
-    setLocked(true)
     setTimedOut(true)
     setResult('wrong')
     sendAnswer({ selected: '', timedOut: true })
+    endGame()
   }
 
   const handleNext = () => {
+    if (gameOver) {
+      return
+    }
     const nextExclude = quiz?.id ? [...answeredIds, quiz.id] : [...answeredIds]
     setAnsweredIds(nextExclude)
     setResettingTimer(true)
@@ -175,7 +187,7 @@ const GamesIndividualPlay = () => {
   }
 
   const handleSelect = (option) => {
-    if (locked || !quiz) return
+    if (locked || !quiz || gameOver) return
 
     if (timerRef.current) {
       clearInterval(timerRef.current)
@@ -187,6 +199,24 @@ const GamesIndividualPlay = () => {
     const isCorrect = option === quiz.option_one
     setResult(isCorrect ? 'correct' : 'wrong')
     sendAnswer({ selected: option, timedOut: false })
+
+    if (isCorrect) {
+      setCorrectCount((prev) => prev + 1)
+    } else {
+      endGame()
+    }
+  }
+
+  const handleRestart = () => {
+    setAnsweredIds([])
+    setCorrectCount(0)
+    setGameOver(false)
+    setShowIntro(true)
+    setQuiz(null)
+    setSelectedOption('')
+    setResult('')
+    setTimedOut(false)
+    loadQuiz([])
   }
 
   const options = useMemo(() => {
@@ -209,8 +239,8 @@ const GamesIndividualPlay = () => {
   return (
     <section className="games-play">
       <header className="materials-header">
-        <h2>Modo Individual</h2>
-        <p>Responda às perguntas no seu ritmo.</p>
+        <h2>Modo Survivor</h2>
+        <p>Acerte o máximo possível sem errar.</p>
       </header>
 
       <div className="quiz-timer">
@@ -222,11 +252,11 @@ const GamesIndividualPlay = () => {
 
       {loading && <div className="quiz-loading">Carregando...</div>}
 
-      {!loading && !quiz && (
+      {!loading && !quiz && !gameOver && (
         <div className="card">
           <div className="card-header">
             <h2>Sem perguntas</h2>
-            <p>Não há quizzes disponíveis para o modo individual.</p>
+            <p>Não há quizzes disponíveis para o modo survivor.</p>
           </div>
         </div>
       )}
@@ -236,8 +266,12 @@ const GamesIndividualPlay = () => {
           <div className="quiz-card-header">
             <div className="quiz-meta">
               <span className="quiz-badge">#{quiz.id}</span>
-              <span className="quiz-meta-item"> {subjectName || `#${quiz.subject_id}`}</span>
+              <span className="quiz-meta-item">Matéria {subjectName || `#${quiz.subject_id}`}</span>
               <span className="quiz-meta-item">Dificuldade: {quiz.difficulty_label || 'Fácil'}</span>
+            </div>
+            <div className="quiz-streak">
+              <span>Sequência de acertos até aqui: {correctCount}</span>
+              <span>Maior sequência até aqui: —</span>
             </div>
             <h3>{quiz.question}</h3>
           </div>
@@ -253,14 +287,19 @@ const GamesIndividualPlay = () => {
                   type="button"
                   className={`quiz-option ${isWrong ? 'wrong' : ''} ${isCorrect ? 'correct' : ''}`}
                   onClick={() => handleSelect(option)}
-                  disabled={locked}
+                  disabled={locked || gameOver}
                 >
                   {option}
                 </button>
               )
             })}
           </div>
-          <button type="button" className="primary" onClick={handleNext} disabled={!selectedOption && !timedOut}>
+          <button
+            type="button"
+            className="primary"
+            onClick={handleNext}
+            disabled={!selectedOption && !timedOut}
+          >
             Próxima
           </button>
         </div>
@@ -270,10 +309,27 @@ const GamesIndividualPlay = () => {
         <div className="game-modal-backdrop" role="presentation">
           <div className="game-modal" role="dialog" aria-modal="true">
             <h3>Antes de começar</h3>
-            <p>Você responderá um quizz com base nas matérias selecionadas. Leia com atenção e escolha a melhor opção.</p>
+            <p>Você responderá um quizz com base nas matérias selecionadas. Errou uma, o jogo termina.</p>
             <button type="button" className="primary" onClick={() => setShowIntro(false)}>
               Começar
             </button>
+          </div>
+        </div>
+      )}
+
+      {gameOver && (
+        <div className="game-modal-backdrop" role="presentation">
+          <div className="game-modal" role="dialog" aria-modal="true">
+            <h3>Fim de jogo</h3>
+            <p>Você acertou {correctCount} pergunta(s) antes de errar.</p>
+            <div className="survivor-actions">
+              <button type="button" className="ghost" onClick={() => navigate('/games')}>
+                Voltar
+              </button>
+              <button type="button" className="primary" onClick={handleRestart}>
+                Jogar novamente
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -281,4 +337,4 @@ const GamesIndividualPlay = () => {
   )
 }
 
-export default GamesIndividualPlay
+export default GamesSurvivorPlay

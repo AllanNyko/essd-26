@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { API_BASE_URL, parseJson } from '../../lib/api'
-import './GamesIndividual.css'
+import './GamesSurvivor.css'
 
-const GamesIndividual = () => {
+const GamesSurvivor = () => {
   const navigate = useNavigate()
   const [subjects, setSubjects] = useState([])
   const [selectedSubjects, setSelectedSubjects] = useState([])
@@ -55,23 +55,23 @@ const GamesIndividual = () => {
 
   const handleStartMulti = () => {
     if (selectedSubjects.length === 0) return
-    localStorage.setItem('essd_game_mode', 'multi')
+    localStorage.setItem('essd_game_mode', 'survivor')
     localStorage.setItem('essd_game_subjects', JSON.stringify(selectedSubjects))
-    navigate('/games/individual/play')
+    navigate('/games/survivor/play')
   }
 
   const handleStartSingle = () => {
     if (!selectedSubjectId) return
-    localStorage.setItem('essd_game_mode', 'single')
+    localStorage.setItem('essd_game_mode', 'survivor')
     localStorage.setItem('essd_game_subjects', JSON.stringify([Number(selectedSubjectId)]))
-    navigate('/games/individual/play')
+    navigate('/games/survivor/play')
   }
 
   return (
-    <section className="games-individual">
+    <section className="games-survivor">
       <header className="materials-header">
-        <h2>Modo Individual</h2>
-        <p>Escolha como deseja montar seu quizz.</p>
+        <h2>Modo Survivor</h2>
+        <p>Descubra até onde você consegue chegar sem errar.</p>
       </header>
 
       <div className="games-mode-grid">
@@ -170,4 +170,4 @@ const GamesIndividual = () => {
   )
 }
 
-export default GamesIndividual
+export default GamesSurvivor

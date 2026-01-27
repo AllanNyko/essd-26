@@ -131,6 +131,8 @@ class QuizController extends Controller
         if ($action === 'validate') {
             $quiz->increment('hits');
             $quiz->increment('validations_count');
+            $quiz->refresh();
+            $quiz->recalculateDifficulty();
         }
 
         if ($action === 'invalidate') {
@@ -162,6 +164,8 @@ class QuizController extends Controller
 
         if ($timedOut) {
             $quiz->increment('errors');
+            $quiz->refresh();
+            $quiz->recalculateDifficulty();
 
             return response()->json([
                 'message' => 'Tempo esgotado. Questão registrada como errada.',
@@ -176,6 +180,9 @@ class QuizController extends Controller
         } else {
             $quiz->increment('errors');
         }
+
+        $quiz->refresh();
+        $quiz->recalculateDifficulty();
 
         return response()->json([
             'message' => $isCorrect ? 'Resposta correta.' : 'Resposta incorreta.',

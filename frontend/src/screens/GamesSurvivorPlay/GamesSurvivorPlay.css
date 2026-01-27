@@ -1,0 +1,157 @@
+.games-play {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.quiz-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quiz-timer {
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.quiz-timer-fill {
+  height: 100%;
+  background: #22c55e;
+  width: 100%;
+  transform-origin: left;
+  transition: transform 1s linear;
+}
+
+.quiz-timer-fill.resetting {
+  transition: none;
+}
+
+.quiz-timer-fill.safe {
+  background: #22c55e;
+}
+
+.quiz-timer-fill.warning {
+  background: #f59e0b;
+}
+
+.quiz-timer-fill.danger {
+  background: #ef4444;
+}
+
+.quiz-loading {
+  color: #64748b;
+}
+
+.quiz-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-streak {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.quiz-streak span {
+  font-size: 0.9rem;
+}
+
+.quiz-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.quiz-meta-item {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.quiz-badge {
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.quiz-option {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.quiz-option:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+.quiz-option.correct {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.quiz-option.wrong {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+
+.game-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+
+.game-modal {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  width: min(420px, 100%);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.survivor-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}

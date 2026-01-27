@@ -23,6 +23,8 @@
 - Central Games (`/games`)
 - Modo Individual (`/games/individual`)
 - Jogo individual (`/games/individual/play`)
+- Modo Survivor (`/games/survivor`)
+- Jogo survivor (`/games/survivor/play`)
 
 ## Stack e dependências
 - Vite + React 19
@@ -64,6 +66,7 @@ Endpoints usados:
 
 ### Regras do jogo
 - Apenas quizzes validados (>= 3 validações) e sem revisão são usados no jogo.
+- Modo Survivor: o jogo termina ao errar uma única questão.
 
 ## Fluxo de autenticação
 - A primeira tela é sempre `/login` para usuários não autenticados.

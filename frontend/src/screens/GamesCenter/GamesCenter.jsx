@@ -32,7 +32,13 @@ const GamesCenter = () => {
           </div>
         </div>
 
-        <div className="games-card game-speed">
+        <div
+          className="games-card game-speed"
+          role="button"
+          tabIndex={0}
+          onClick={() => navigate('/games/survivor')}
+          onKeyDown={(event) => event.key === 'Enter' && navigate('/games/survivor')}
+        >
           <div className="games-card-content">
             <h3>Modo Survivor</h3>
             <span>Acerte o máximo de perguntas. Se errar uma, o jogo termina.</span>

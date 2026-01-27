@@ -186,6 +186,8 @@ Retorna array de matérias com `id` e `name`.
 - `errors`: número de erros acumulados.
 - `invalidate_count`: número de invalidações acumuladas.
 - `needs_review`: indica revisão após 5 invalidações.
+- `accuracy_percentage`: porcentagem de acertos calculada com `(hits / (hits + errors)) * 100`.
+- `difficulty_label`: classificação baseada na porcentagem (Difícil < 30%, Média >= 30% e < 70%, Fácil >= 70%).
 
 ## Regras de jogo
 - O modo de jogo usa apenas quizzes validados (>= 3 validações) e sem revisão.
