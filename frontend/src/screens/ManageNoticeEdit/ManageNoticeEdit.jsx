@@ -9,6 +9,7 @@ const ManageNoticeEdit = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [observation, setObservation] = useState('')
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
 
   useEffect(() => {
@@ -23,10 +24,12 @@ const ManageNoticeEdit = () => {
 
         if (response.ok && active) {
           setName(data?.notice?.name || '')
+          setObservation(data?.notice?.observation || '')
         }
       } catch {
         if (active) {
           setName('')
+          setObservation('')
         }
       }
     }
@@ -44,7 +47,8 @@ const ManageNoticeEdit = () => {
     event.preventDefault()
 
     const trimmed = name.trim()
-    if (!trimmed) {
+    const trimmedObservation = observation.trim()
+    if (!trimmed || !trimmedObservation) {
       return
     }
 
@@ -54,7 +58,7 @@ const ManageNoticeEdit = () => {
       const response = await fetch(`${API_BASE_URL}/notices/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ name: trimmed }),
+        body: JSON.stringify({ name: trimmed, observation: trimmedObservation }),
       })
 
       const data = await parseJson(response)
@@ -74,15 +78,15 @@ const ManageNoticeEdit = () => {
     <section className="manage-edit">
       <header className="materials-header">
         <h2>Editar Edital</h2>
-        <p>Atualize o nome do edital selecionado.</p>
+        <p>Atualize o nome e a observação do edital selecionado.</p>
       </header>
 
       <FormCard
         title="Editar edital"
-        description="Informe o novo nome do edital."
+        description="Informe o novo nome e a observação do edital."
         actionLabel={status.loading ? 'Salvando...' : 'Salvar alterações'}
         onSubmit={handleSubmit}
-        disabled={!name.trim() || status.loading}
+        disabled={!name.trim() || !observation.trim() || status.loading}
       >
         <Input
           label="Nome do edital"
@@ -90,6 +94,14 @@ const ManageNoticeEdit = () => {
           placeholder="Ex.: Edital 2026 - Revisado"
           value={name}
           onChange={(event) => setName(event.target.value)}
+        />
+        <Input
+          label="Observação"
+          name="observation"
+          placeholder="Ex.: Edital com novas regras"
+          value={observation}
+          onChange={(event) => setObservation(event.target.value)}
+          maxLength={50}
         />
         <div className="status">
           {status.error && <span className="error">{status.error}</span>}

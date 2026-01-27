@@ -1,4 +1,4 @@
-const Input = ({ label, type = 'text', name, placeholder, value, onChange, required = true, autoComplete }) => (
+const Input = ({ label, type = 'text', name, placeholder, value, onChange, required = true, autoComplete, maxLength }) => (
   <label className="field">
     <span>{label}</span>
     <input
@@ -9,6 +9,7 @@ const Input = ({ label, type = 'text', name, placeholder, value, onChange, requi
       onChange={onChange}
       required={required}
       autoComplete={autoComplete}
+      maxLength={maxLength}
     />
   </label>
 )

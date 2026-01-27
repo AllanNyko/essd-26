@@ -169,7 +169,9 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
           <select name="notice_id" value={form.notice_id} onChange={handleChange}>
             <option value="">Sem edital</option>
             {notices.map((notice) => (
-              <option key={notice.id} value={notice.id}>{notice.name}</option>
+              <option key={notice.id} value={notice.id}>
+                {notice.name}{notice.observation ? ` — ${notice.observation}` : ''}
+              </option>
             ))}
           </select>
         </label>

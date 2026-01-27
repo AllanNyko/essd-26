@@ -8,6 +8,7 @@ import './ManageNotices.css'
 const ManageNotices = () => {
   const navigate = useNavigate()
   const [name, setName] = useState('')
+  const [observation, setObservation] = useState('')
   const [notices, setNotices] = useState([])
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
   const [modal, setModal] = useState({ open: false, item: null })
@@ -35,7 +36,8 @@ const ManageNotices = () => {
     event.preventDefault()
 
     const trimmed = name.trim()
-    if (!trimmed) {
+    const trimmedObservation = observation.trim()
+    if (!trimmed || !trimmedObservation) {
       return
     }
 
@@ -45,7 +47,7 @@ const ManageNotices = () => {
       const response = await fetch(`${API_BASE_URL}/notices`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({ name: trimmed }),
+        body: JSON.stringify({ name: trimmed, observation: trimmedObservation }),
       })
 
       const data = await parseJson(response)
@@ -56,6 +58,7 @@ const ManageNotices = () => {
 
       setStatus({ loading: false, error: '', success: data.message || 'Edital cadastrado com sucesso.' })
       setName('')
+      setObservation('')
       loadNotices()
     } catch (error) {
       setStatus({ loading: false, error: error.message, success: '' })
@@ -97,7 +100,7 @@ const ManageNotices = () => {
         description="Informe o nome do edital a ser adicionado."
         actionLabel={status.loading ? 'Salvando...' : 'Cadastrar'}
         onSubmit={handleSubmit}
-        disabled={!name.trim() || status.loading}
+        disabled={!name.trim() || !observation.trim() || status.loading}
       >
         <Input
           label="Nome do edital"
@@ -105,6 +108,14 @@ const ManageNotices = () => {
           placeholder="Ex.: Edital 2026"
           value={name}
           onChange={(event) => setName(event.target.value)}
+        />
+        <Input
+          label="Observação"
+          name="observation"
+          placeholder="Ex.: Vagas na área administrativa"
+          value={observation}
+          onChange={(event) => setObservation(event.target.value)}
+          maxLength={50}
         />
         <div className="status">
           {status.error && <span className="error">{status.error}</span>}

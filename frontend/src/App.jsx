@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './screens/Login/Login'
 import Signup from './screens/Signup/Signup'
 import ForgotPassword from './screens/ForgotPassword/ForgotPassword'
 import UpdateProfile from './screens/UpdateProfile/UpdateProfile'
 import Home from './screens/Home/Home'
+import AppNavbar from './components/AppNavbar'
 import Materials from './screens/Materials/Materials'
 import MaterialsSend from './screens/MaterialsSend/MaterialsSend'
 import MaterialsSendUpload from './screens/MaterialsSendUpload/MaterialsSendUpload'
@@ -39,6 +40,13 @@ const PublicRoute = ({ isAllowed, redirectTo, children }) => {
 
   return children
 }
+
+const AppLayout = ({ user, onLogout }) => (
+  <>
+    <AppNavbar user={user} onLogout={onLogout} />
+    <Outlet />
+  </>
+)
 
 function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -91,157 +99,32 @@ function App() {
               )}
             />
             <Route
-              path="/home"
               element={(
                 <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <Home user={currentUser} onLogout={handleLogout} />
+                  <AppLayout user={currentUser} onLogout={handleLogout} />
                 </ProtectedRoute>
               )}
-            />
-            <Route
-              path="/profile"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <UpdateProfile user={currentUser} onUserUpdated={handleUserUpdated} />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <Materials />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials/send"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <MaterialsSend />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials/send/:type"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <MaterialsSendUpload />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials/quiz/send"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <QuizSend />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials/validate"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <MaterialsValidate />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/materials/validate/quiz"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <QuizValidate />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/subjects"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManageSubjects />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/subjects/:id/edit"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManageSubjectEdit />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/notices"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManageNotices />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/notices/:id/edit"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManageNoticeEdit />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/plans"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManagePlans />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/manage/plans/:id/edit"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <ManagePlanEdit />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/plans"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <PlansOverview />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/notes"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <NotesCenter />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/games"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <GamesCenter />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/games/individual"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <GamesIndividual />
-                </ProtectedRoute>
-              )}
-            />
-            <Route
-              path="/games/individual/play"
-              element={(
-                <ProtectedRoute isAllowed={!!currentUser} redirectTo="/login">
-                  <GamesIndividualPlay />
-                </ProtectedRoute>
-              )}
-            />
+            >
+              <Route path="/home" element={<Home user={currentUser} onLogout={handleLogout} />} />
+              <Route path="/profile" element={<UpdateProfile user={currentUser} onUserUpdated={handleUserUpdated} />} />
+              <Route path="/materials" element={<Materials />} />
+              <Route path="/materials/send" element={<MaterialsSend />} />
+              <Route path="/materials/send/:type" element={<MaterialsSendUpload />} />
+              <Route path="/materials/quiz/send" element={<QuizSend />} />
+              <Route path="/materials/validate" element={<MaterialsValidate />} />
+              <Route path="/materials/validate/quiz" element={<QuizValidate />} />
+              <Route path="/manage/subjects" element={<ManageSubjects />} />
+              <Route path="/manage/subjects/:id/edit" element={<ManageSubjectEdit />} />
+              <Route path="/manage/notices" element={<ManageNotices />} />
+              <Route path="/manage/notices/:id/edit" element={<ManageNoticeEdit />} />
+              <Route path="/manage/plans" element={<ManagePlans />} />
+              <Route path="/manage/plans/:id/edit" element={<ManagePlanEdit />} />
+              <Route path="/plans" element={<PlansOverview />} />
+              <Route path="/notes" element={<NotesCenter />} />
+              <Route path="/games" element={<GamesCenter />} />
+              <Route path="/games/individual" element={<GamesIndividual />} />
+              <Route path="/games/individual/play" element={<GamesIndividualPlay />} />
+            </Route>
             <Route
               path="*"
               element={currentUser ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />}

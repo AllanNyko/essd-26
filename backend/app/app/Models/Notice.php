@@ -11,5 +11,6 @@ class Notice extends Model
 
     protected $fillable = [
         'name',
+        'observation',
     ];
 }

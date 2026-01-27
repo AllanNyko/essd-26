@@ -15,6 +15,7 @@ class NoticeStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:255', 'unique:notices,name'],
+            'observation' => ['required', 'string', 'min:1', 'max:50'],
         ];
     }
 }

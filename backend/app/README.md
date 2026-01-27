@@ -108,14 +108,16 @@ Retorna array de matérias com `id` e `name`.
 ### Cadastrar edital
 ```json
 {
-	"name": "Edital 2026"
+	"name": "Edital 2026",
+	"observation": "Observação curta"
 }
 ```
 
 ### Atualizar edital
 ```json
 {
-  "name": "Edital 2026 - Revisado"
+	"name": "Edital 2026 - Revisado",
+	"observation": "Observação curta"
 }
 ```
 

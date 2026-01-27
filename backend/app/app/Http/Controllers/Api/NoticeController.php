@@ -13,7 +13,7 @@ class NoticeController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'notices' => Notice::query()->orderBy('name')->get(['id', 'name']),
+            'notices' => Notice::query()->orderBy('name')->get(['id', 'name', 'observation']),
         ]);
     }
 

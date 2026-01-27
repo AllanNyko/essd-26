@@ -42,7 +42,7 @@ Endpoints usados:
 - Detalhar matéria: `GET /subjects/{id}`
 - Atualizar matéria: `PATCH /subjects/{id}`
 - Excluir matéria: `DELETE /subjects/{id}`
-- Listar editais: `GET /notices`
+- Listar editais: `GET /notices` (retorna `name` e `observation`)
 - Cadastrar edital: `POST /notices`
 - Detalhar edital: `GET /notices/{id}`
 - Atualizar edital: `PATCH /notices/{id}`
