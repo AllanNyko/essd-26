@@ -37,34 +37,68 @@ Endpoints usados:
 - Cadastro: `POST /auth/register`
 - Login: `POST /auth/login`
 - Recuperar senha: `POST /auth/forgot-password`
-- Atualizar usuário: `PATCH /users/{id}`
+- Atualizar usuário: `PATCH /users/{id}` (auth planejada)
 - Upload de materiais: `POST /materials/upload` (multipart/form-data)
-- Listar matérias: `GET /subjects` (use `only_with_quizzes=1` para jogos)
+- Listar matérias: `GET /subjects` (use `only_with_quizzes=1` para jogos) (paginação planejada)
 - Cadastrar matéria: `POST /subjects`
 - Detalhar matéria: `GET /subjects/{id}`
 - Atualizar matéria: `PATCH /subjects/{id}`
 - Excluir matéria: `DELETE /subjects/{id}`
-- Listar editais: `GET /notices` (retorna `name` e `observation`)
+- Listar editais: `GET /notices` (retorna `name` e `observation`) (paginação planejada)
 - Cadastrar edital: `POST /notices`
 - Detalhar edital: `GET /notices/{id}`
 - Atualizar edital: `PATCH /notices/{id}`
 - Excluir edital: `DELETE /notices/{id}`
-- Listar planos: `GET /plans`
+- Listar planos: `GET /plans` (paginação planejada)
 - Cadastrar plano: `POST /plans`
 - Detalhar plano: `GET /plans/{id}`
 - Atualizar plano: `PATCH /plans/{id}`
 - Excluir plano: `DELETE /plans/{id}`
 - Criar quizz: `POST /quizzes`
-- Próximo quizz: `GET /quizzes/next`
+- Próximo quizz (validação): `GET /quizzes/next?user_id={id}`
 - Validar quizz: `POST /quizzes/{id}/validate`
-- Listar notas: `GET /notes?user_id={id}`
+- Listar notas: `GET /notes?user_id={id}` (paginação planejada)
 - Cadastrar nota: `POST /notes`
-- Consultar pontuação: `GET /scores?user_id={id}`
-- Atualizar pontuação: `PATCH /scores`
+- Consultar pontuação: `GET /scores?user_id={id}` (auth planejada)
+- Atualizar pontuação: `PATCH /scores` (auth planejada)
 - Próximo quizz (jogo): `GET /quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /quizzes/{id}/answer`
 - Iniciar sessão de jogo: `POST /game-sessions`
 - Encerrar sessão de jogo: `POST /game-sessions/close`
+
+### Padrão de resposta da API
+- Sucesso: `message`, `data` e `meta` (quando paginado).
+- Erro: `error.code`, `error.message` e `error.details`.
+- Referência completa em [backend/README.md](../backend/README.md).
+
+Exemplo de sucesso:
+```json
+{
+	"message": "Operação realizada com sucesso.",
+	"data": {
+		"id": 1
+	},
+	"meta": {
+		"page": 1,
+		"per_page": 10,
+		"total": 100,
+		"last_page": 10
+	}
+}
+```
+
+Exemplo de erro:
+```json
+{
+	"error": {
+		"code": "VALIDATION_ERROR",
+		"message": "Os dados informados são inválidos.",
+		"details": {
+			"email": ["O e-mail é obrigatório."]
+		}
+	}
+}
+```
 
 ### Regras do jogo
 - Apenas quizzes validados (>= 3 validações) e sem revisão são usados no jogo.
@@ -102,6 +136,10 @@ Endpoints usados:
 - Ao clicar em 👍/👎 envia `POST /quizzes/{id}/validate` com `{ action: "validate" | "invalidate", user_id }`.
 - Quizz com 3 validações não aparece mais; com 5 invalidações entra em revisão.
 
+### Quizz (jogo)
+- `GET /quizzes/play/next` usa `subject_ids` e `exclude_ids` para filtrar e evitar repetição.
+- O jogo usa apenas quizzes validados (>= 3 validações) e sem revisão.
+
 ## Gestão de cadastros
 - `/manage/subjects`, `/manage/notices`, `/manage/plans` permitem cadastrar e listar.
 - O botão Excluir abre um modal de confirmação e envia `DELETE` para o respectivo endpoint.
@@ -123,6 +161,8 @@ Endpoints usados:
 1) Instalar deps (já feito no container, mas localmente): `npm install`
 2) Dev server: `npm run dev -- --host 0.0.0.0 --port 3000`
 3) Acessar via Nginx: http://localhost:8080 (proxy para o frontend em 3000)
+
+⚠️ **IMPORTANTE**: Sempre use a mesma porta (recomendado: 8080 via Nginx) para evitar problemas com localStorage. O `localStorage` é isolado por origem (porta diferente = localStorage diferente). Se você fizer login na porta 3000 e depois acessar na 8080, os dados do usuário não estarão sincronizados.
 
 ## Estrutura
 - Rotas: [src/App.jsx](src/App.jsx)

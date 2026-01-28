@@ -6,38 +6,106 @@
 - Cadastro: `POST /api/auth/register`
 - Login: `POST /api/auth/login`
 - Recuperar senha: `POST /api/auth/forgot-password`
-- Atualizar usuário: `PATCH /api/users/{id}`
+- Atualizar usuário: `PATCH /api/users/{id}` (auth planejada)
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
+- Próximo quizz (validação): `GET /api/quizzes/next?user_id=1`
 - Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /api/quizzes/{id}/answer`
 - Iniciar sessão de jogo: `POST /api/game-sessions`
 - Encerrar sessão de jogo: `POST /api/game-sessions/close`
 - Expirar sessões de jogo: `POST /api/game-sessions/expire`
-- Listar matérias: `GET /api/subjects` (use `only_with_quizzes=1` para jogos)
+- Listar matérias: `GET /api/subjects` (use `only_with_quizzes=1` para jogos) (paginação planejada)
 - Cadastrar matéria: `POST /api/subjects`
 - Detalhar matéria: `GET /api/subjects/{id}`
 - Atualizar matéria: `PATCH /api/subjects/{id}`
 - Excluir matéria: `DELETE /api/subjects/{id}`
-- Listar editais: `GET /api/notices`
+- Listar editais: `GET /api/notices` (paginação planejada)
 - Cadastrar edital: `POST /api/notices`
 - Detalhar edital: `GET /api/notices/{id}`
 - Atualizar edital: `PATCH /api/notices/{id}`
 - Excluir edital: `DELETE /api/notices/{id}`
-- Listar planos: `GET /api/plans`
+- Listar planos: `GET /api/plans` (paginação planejada)
 - Cadastrar plano: `POST /api/plans`
 - Detalhar plano: `GET /api/plans/{id}`
 - Atualizar plano: `PATCH /api/plans/{id}`
 - Excluir plano: `DELETE /api/plans/{id}`
-- Listar notas: `GET /api/notes?user_id={id}`
+- Listar notas: `GET /api/notes?user_id={id}` (paginação planejada)
 - Cadastrar nota: `POST /api/notes`
-- Consultar pontuação: `GET /api/scores?user_id={id}`
-- Atualizar pontuação: `PATCH /api/scores`
+- Consultar pontuação: `GET /api/scores?user_id={id}` (auth planejada)
+- Atualizar pontuação: `PATCH /api/scores` (auth planejada)
 
 ### Exclusão
 - Os endpoints `DELETE` removem o registro definitivamente.
-- Próximo quizz: `GET /api/quizzes/next`
+- Próximo quizz (validação): `GET /api/quizzes/next`
 - Validar quizz: `POST /api/quizzes/{id}/validate`
+
+## Padrão de resposta da API
+### Sucesso
+```json
+{
+	"message": "Operação realizada com sucesso.",
+	"data": {},
+	"meta": {
+		"page": 1,
+		"per_page": 10,
+		"total": 100,
+		"last_page": 10
+	}
+}
+```
+
+### Erro
+```json
+{
+	"error": {
+		"code": "VALIDATION_ERROR",
+		"message": "Os dados informados são inválidos.",
+		"details": {
+			"field": ["Mensagem de validação"]
+		}
+	}
+}
+```
+
+## Catálogo de erros
+- `400`: requisição inválida (payload malformado).
+- `401`: não autenticado (token ausente/expirado).
+- `403`: proibido (sem permissão).
+- `404`: recurso não encontrado.
+- `409`: conflito (ex.: validação duplicada).
+- `422`: erro de validação.
+- `500`: erro inesperado.
+
+### Exemplos de erro
+**Login inválido** (`POST /api/auth/login`)
+```json
+{
+	"error": {
+		"code": "AUTH_INVALID_CREDENTIALS",
+		"message": "E-mail ou senha inválidos."
+	}
+}
+```
+
+**Resposta de quizz inválida** (`POST /api/quizzes/{id}/answer`)
+```json
+{
+	"error": {
+		"code": "VALIDATION_ERROR",
+		"message": "Os dados informados são inválidos.",
+		"details": {
+			"game_mode": ["O modo de jogo é obrigatório."],
+			"time_left": ["O tempo deve estar entre 0 e 20."]
+		}
+	}
+}
+```
+
+## Autenticação e paginação (planejamento)
+- Autenticação robusta será aplicada via tokens (Sanctum ou JWT).
+- Endpoints marcados como `auth planejada` passarão a exigir `Authorization: Bearer <token>`.
+- Endpoints marcados como `paginação planejada` retornarão `meta` com `page`, `per_page`, `total` e `last_page`.
 
 ## Como testar
 1) Suba os containers: `docker compose up -d`
@@ -204,6 +272,7 @@ Retorna array de matérias com `id` e `name`.
 - O modo de jogo usa apenas quizzes validados (>= 3 validações) e sem revisão.
 - Sessões em andamento expiradas são marcadas como erro automaticamente.
 - Fechamento/expiração de sessão é idempotente (penaliza somente uma vez).
+- O endpoint de jogo aceita `subject_ids` e `exclude_ids` para filtrar e evitar repetição.
 
 ## Notas
 - Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já configuradas em `.env`.

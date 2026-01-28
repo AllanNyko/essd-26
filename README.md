@@ -21,6 +21,15 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - Frontend: respeitar a responsividade sempre.
 - Backend: usar validação via Form Requests e Eloquent para evitar SQL injection.
 
+## Melhorias estruturais (planejamento)
+- Autenticação robusta: adoção de tokens (Sanctum ou JWT) com expiração e proteção de rotas.
+- Paginação padronizada: parâmetros `page` e `per_page` em listagens e retorno de metadados.
+- Testes automatizados: cobertura mínima de fluxos críticos (auth, quizzes e sessões de jogo).
+
+## Padrões de API
+- Respostas e erros padronizados no backend: ver [backend/README.md](backend/README.md).
+- Documentação de uso no frontend: ver [frontend/README.md](frontend/README.md).
+
 ## Registro de Atualizações
 > Adicione aqui novas regras e decisões ao longo do tempo.
 
@@ -43,3 +52,6 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-27: Quizzes agora armazenam porcentagem de acertos e dificuldade calculada.
 - 2026-01-27: Pontuação por modo (individual/survivor) e bônus por tempo em quizzes.
 - 2026-01-27: Sessões de jogo registradas para penalizar abandonos/refresh.
+- 2026-01-27: Planejamento de autenticação robusta (tokens), paginação e testes automatizados.
+- 2026-01-27: Padronização de respostas e erros da API documentada no backend.
+- 2026-01-27: Exemplos de respostas de sucesso/erro adicionados na documentação do frontend.
