@@ -26,6 +26,8 @@ import GamesIndividual from './screens/GamesIndividual/GamesIndividual'
 import GamesIndividualPlay from './screens/GamesIndividualPlay/GamesIndividualPlay'
 import GamesSurvivor from './screens/GamesSurvivor/GamesSurvivor'
 import GamesSurvivorPlay from './screens/GamesSurvivorPlay/GamesSurvivorPlay'
+import Stats from './screens/Stats/Stats'
+import Ranking from './screens/Ranking/Ranking'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -123,6 +125,8 @@ function App() {
               <Route path="/manage/plans/:id/edit" element={<ManagePlanEdit />} />
               <Route path="/plans" element={<PlansOverview />} />
               <Route path="/notes" element={<NotesCenter />} />
+              <Route path="/stats" element={<Stats />} />
+              <Route path="/ranking" element={<Ranking />} />
               <Route path="/games" element={<GamesCenter />} />
               <Route path="/games/individual" element={<GamesIndividual />} />
               <Route path="/games/individual/play" element={<GamesIndividualPlay />} />

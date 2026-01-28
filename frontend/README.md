@@ -21,6 +21,8 @@
 - Planos disponíveis (`/plans`)
 - Central de Notas (`/notes`)
 - Central Games (`/games`)
+- Central de Estatísticas (`/stats`)
+- Ranking (`/ranking`)
 - Modo Individual (`/games/individual`)
 - Jogo individual (`/games/individual/play`)
 - Modo Survivor (`/games/survivor`)
