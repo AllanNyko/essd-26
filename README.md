@@ -55,3 +55,5 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-27: Planejamento de autenticação robusta (tokens), paginação e testes automatizados.
 - 2026-01-27: Padronização de respostas e erros da API documentada no backend.
 - 2026-01-27: Exemplos de respostas de sucesso/erro adicionados na documentação do frontend.
+- 2026-01-27: Avatar do usuário com upload imediato e persistência via `avatar_url`.
+- 2026-01-27: Coluna `avatar_url` ajustada para `LONGTEXT` para suportar data URL.

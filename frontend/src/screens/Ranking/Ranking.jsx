@@ -6,10 +6,13 @@ const Ranking = () => {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const [ranking, setRanking] = useState([])
   const [loading, setLoading] = useState(true)
-  const currentUserId = useMemo(() => {
+  const { currentUserId, currentUserSnapshot } = useMemo(() => {
     const storedUser = localStorage.getItem('essd_user')
     const currentUser = storedUser ? JSON.parse(storedUser) : null
-    return currentUser?.id ?? 5
+    return {
+      currentUserId: currentUser?.id ? Number(currentUser.id) : 5,
+      currentUserSnapshot: currentUser,
+    }
   }, [])
   const users = useMemo(() => ([
     {
@@ -146,8 +149,8 @@ const Ranking = () => {
           .map((entry) => ({
             id: entry.id,
             name: entry.name,
-            avatar: fallbackById[entry.id]?.avatar,
-            points: Number(entry.total_score ?? 0),
+            avatar: entry.avatar_url || fallbackById[entry.id]?.avatar,
+            points: Number(entry.quiz_points ?? 0),
             average: Number(entry.average_score ?? 0),
           }))
           .sort((a, b) => b.average - a.average)
@@ -180,7 +183,15 @@ const Ranking = () => {
       rank: index + 1,
     }))
 
-  const currentUser = rankingData.find((user) => user.id === currentUserId)
+  const currentUserFromRanking = rankingData.find((user) => user.id === currentUserId)
+  const currentUser = currentUserFromRanking || (currentUserSnapshot ? {
+    id: Number(currentUserSnapshot.id),
+    name: currentUserSnapshot.name,
+    avatar: currentUserSnapshot.avatar_url || currentUserSnapshot.avatar,
+    points: Number(currentUserSnapshot.quiz_points ?? 0),
+    average: Number(currentUserSnapshot.average_score ?? 0),
+    rank: currentUserSnapshot.rank,
+  } : null)
   const rankingList = rankingData.filter((user) => user.id !== currentUserId)
 
   useEffect(() => {
@@ -211,10 +222,10 @@ const Ranking = () => {
         <div className="ranking-user">
           <div className="ranking-position">#{currentUser?.rank ?? '-'}</div>
           <div className="ranking-avatar" aria-hidden="true">
-            <img src={currentUser?.avatar || 'https://i.pravatar.cc/80?img=15'} alt="Seu avatar" />
+            <img src={currentUser?.avatar || currentUserSnapshot?.avatar_url || currentUserSnapshot?.avatar || 'https://i.pravatar.cc/80?img=15'} alt="Seu avatar" />
           </div>
           <div className="ranking-info">
-            <span className="ranking-name">{currentUser?.name || 'Seu desempenho'}</span>
+            <span className="ranking-name">{currentUser?.name || currentUserSnapshot?.name || 'Seu desempenho'}</span>
             <span className="ranking-metric">
               Média: {currentUser ? formatAverage(currentUser.average) : (loading ? '...' : '-')}
             </span>

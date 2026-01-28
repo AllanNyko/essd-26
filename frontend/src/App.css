@@ -78,6 +78,23 @@
   gap: 16px;
 }
 
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card-header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header-actions {
+  display: flex;
+  align-items: center;
+}
+
 .card-header h2 {
   margin: 0;
   font-size: 1.25rem;

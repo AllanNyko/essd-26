@@ -29,6 +29,37 @@
 	color: #dc2626;
 }
 
+.profile-avatar {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+}
+
+.profile-avatar img {
+	width: 64px;
+	height: 64px;
+	border-radius: 999px;
+	object-fit: cover;
+	border: 2px solid #e2e8f0;
+	background: #ffffff;
+}
+
+.profile-avatar-button {
+	border: none;
+	background: #e0e7ff;
+	color: #1d4ed8;
+	font-weight: 700;
+	font-size: 0.85rem;
+	padding: 6px 10px;
+	border-radius: 999px;
+	cursor: pointer;
+}
+
+.profile-avatar-input {
+	display: none;
+}
+
 .profile-field {
 	display: flex;
 	flex-direction: column;

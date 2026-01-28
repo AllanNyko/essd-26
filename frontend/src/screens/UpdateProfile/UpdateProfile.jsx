@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
@@ -22,9 +22,12 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
   const [modal, setModal] = useState({ open: false, type: '', message: '' })
   const [plans, setPlans] = useState([])
   const [notices, setNotices] = useState([])
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar_url || user?.avatar || '')
+  const fileInputRef = useRef(null)
 
   useEffect(() => {
     setForm(initial)
+    setAvatarPreview(user?.avatar_url || user?.avatar || '')
   }, [initial])
 
   useEffect(() => {
@@ -151,6 +154,59 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     }
   }
 
+  const handleAvatarSelect = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleAvatarChange = (event) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    const reader = new FileReader()
+
+    reader.onload = async () => {
+      const preview = reader.result
+      if (typeof preview !== 'string') {
+        return
+      }
+
+      setAvatarPreview(preview)
+
+      if (!user?.id) {
+        onUserUpdated?.({ ...user, avatar_url: preview })
+        setModal({ open: true, type: 'success', message: 'Foto atualizada com sucesso.' })
+        return
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/users/${user.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ avatar_url: preview }),
+        })
+
+        const data = await parseJson(response)
+
+        if (!response.ok) {
+          throw new Error(data?.message || 'Não foi possível atualizar a foto.')
+        }
+
+        if (data?.user) {
+          onUserUpdated?.(data.user)
+        }
+
+        setModal({ open: true, type: 'success', message: 'Foto atualizada com sucesso.' })
+      } catch (error) {
+        setModal({ open: true, type: 'error', message: error.message || 'Não foi possível atualizar a foto.' })
+      }
+    }
+
+    reader.readAsDataURL(file)
+  }
+
   return (
     <>
       <FormCard
@@ -159,6 +215,21 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
         actionLabel="Salvar"
         onSubmit={handleSubmit}
         disabled={!isDirty || status.loading}
+        headerRight={(
+          <div className="profile-avatar">
+            <img src={avatarPreview || 'https://i.pravatar.cc/80?img=15'} alt="Foto do usuário" />
+            <button type="button" className="profile-avatar-button" onClick={handleAvatarSelect}>
+              Alterar
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="profile-avatar-input"
+              onChange={handleAvatarChange}
+            />
+          </div>
+        )}
       >
         <input type="hidden" name="id" value={form.id} readOnly />
         <Input label="Nome completo" name="name" placeholder="Joana Silva" value={form.name} onChange={handleChange} required={false} />

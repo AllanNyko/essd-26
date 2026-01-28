@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="ESSD">
+  <rect width="512" height="512" rx="96" fill="#2563eb" />
+  <circle cx="256" cy="256" r="220" fill="#22c55e" />
+  <text x="50%" y="54%" text-anchor="middle" font-family="Arial, sans-serif" font-size="160" font-weight="700" fill="#ffffff">ES</text>
+  <text x="50%" y="78%" text-anchor="middle" font-family="Arial, sans-serif" font-size="120" font-weight="700" fill="#ffffff">SD</text>
+</svg>

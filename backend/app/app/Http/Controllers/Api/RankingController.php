@@ -16,15 +16,18 @@ class RankingController extends Controller
 
         $query = User::query()
             ->join('notes', 'notes.user_id', '=', 'users.id')
+            ->leftJoin('user_scores', 'user_scores.user_id', '=', 'users.id')
             ->select(
                 'users.id',
                 'users.name',
                 'users.email',
+                'users.avatar_url',
+                DB::raw('COALESCE(MAX(user_scores.quiz_points), 0) as quiz_points'),
                 DB::raw('AVG(notes.score) as average_score'),
                 DB::raw('SUM(notes.score) as total_score'),
                 DB::raw('COUNT(notes.id) as total_notes')
             )
-            ->groupBy('users.id', 'users.name', 'users.email')
+            ->groupBy('users.id', 'users.name', 'users.email', 'users.avatar_url')
             ->orderByDesc('average_score');
 
         if ($noticeId !== null) {

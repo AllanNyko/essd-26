@@ -158,6 +158,7 @@ Exemplo de erro:
 
 ### Atualização de perfil
 - Campos: `name`, `email`, `phone`, `notice_id`, `password`, `password_confirmation`
+- Avatar: upload imediato via `PATCH /users/{id}` com `avatar_url` (data URL base64).
 
 ## Como rodar
 1) Instalar deps (já feito no container, mas localmente): `npm install`

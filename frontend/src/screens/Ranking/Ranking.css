@@ -30,7 +30,7 @@
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px 34px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
@@ -61,6 +61,7 @@
 .ranking-position {
   font-weight: 700;
   color: #1d4ed8;
+  padding-left: 2px;
 }
 
 .ranking-avatar {
@@ -103,6 +104,7 @@
   font-weight: 700;
   color: #16a34a;
   white-space: nowrap;
+  padding-right: 4px;
 }
 
 .ranking-scroll-top {

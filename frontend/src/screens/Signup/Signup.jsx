@@ -16,6 +16,7 @@ const Signup = ({ onAuthenticated }) => {
   })
   const [planId, setPlanId] = useState('')
   const [plans, setPlans] = useState([])
+  const [plansStatus, setPlansStatus] = useState({ loading: false, error: '' })
   const [step, setStep] = useState(1)
   const [status, setStatus] = useState({ loading: false, error: '', success: '' })
   const navigate = useNavigate()
@@ -29,6 +30,9 @@ const Signup = ({ onAuthenticated }) => {
     let active = true
 
     const loadPlans = async () => {
+      if (active) {
+        setPlansStatus({ loading: true, error: '' })
+      }
       try {
         const response = await fetch(`${API_BASE_URL}/plans`, {
           headers: { 'Accept': 'application/json' },
@@ -37,10 +41,17 @@ const Signup = ({ onAuthenticated }) => {
 
         if (response.ok && active) {
           setPlans(data?.plans || [])
+          setPlansStatus({ loading: false, error: '' })
+          return
+        }
+        if (active) {
+          setPlans([])
+          setPlansStatus({ loading: false, error: data?.message || 'Não foi possível carregar os planos.' })
         }
       } catch {
         if (active) {
           setPlans([])
+          setPlansStatus({ loading: false, error: 'Não foi possível carregar os planos.' })
         }
       }
     }
@@ -133,7 +144,7 @@ const Signup = ({ onAuthenticated }) => {
           <>
             <label className="signup-field">
               <span>Plano desejado</span>
-              <select value={planId} onChange={(event) => setPlanId(event.target.value)}>
+              <select value={planId} onChange={(event) => setPlanId(event.target.value)} disabled={plansStatus.loading}>
                 <option value="">Selecione um plano</option>
                 {plans.map((plan) => (
                   <option key={plan.id} value={plan.id}>
@@ -142,6 +153,11 @@ const Signup = ({ onAuthenticated }) => {
                 ))}
               </select>
             </label>
+            {plansStatus.loading && <span className="muted">Carregando planos...</span>}
+            {plansStatus.error && <span className="error">{plansStatus.error}</span>}
+            {!plansStatus.loading && !plansStatus.error && plans.length === 0 && (
+              <span className="muted">Nenhum plano disponível no momento.</span>
+            )}
             <div className="signup-actions">
               <button type="button" className="secondary" onClick={() => setStep(1)}>
                 Voltar

@@ -22,6 +22,7 @@ class UpdateUserRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', 'max:255', Rule::unique('users', 'email')->ignore($userId)],
+            'avatar_url' => ['sometimes', 'nullable', 'string'],
             'phone' => ['sometimes', 'nullable', 'string', 'min:8', 'max:20'],
             'notice_id' => ['sometimes', 'nullable', 'integer', 'exists:notices,id'],
             'password' => ['sometimes', 'confirmed', Password::defaults()],

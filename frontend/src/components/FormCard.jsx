@@ -1,8 +1,11 @@
-const FormCard = ({ title, description, onSubmit, children, actionLabel, footer, disabled = false }) => (
+const FormCard = ({ title, description, onSubmit, children, actionLabel, footer, disabled = false, headerRight = null }) => (
   <div className="card">
     <div className="card-header">
-      <h2>{title}</h2>
-      <p>{description}</p>
+      <div className="card-header-content">
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </div>
+      {headerRight && <div className="card-header-actions">{headerRight}</div>}
     </div>
     <form className="form" onSubmit={onSubmit}>
       {children}

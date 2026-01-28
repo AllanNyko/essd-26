@@ -6,7 +6,7 @@
 - Cadastro: `POST /api/auth/register`
 - Login: `POST /api/auth/login`
 - Recuperar senha: `POST /api/auth/forgot-password`
-- Atualizar usuário: `PATCH /api/users/{id}` (auth planejada)
+- Atualizar usuário: `PATCH /api/users/{id}` (auth planejada) — aceita `avatar_url` (data URL)
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
 - Próximo quizz (validação): `GET /api/quizzes/next?user_id=1`
@@ -150,11 +150,15 @@
 	"name": "Novo Nome",
 	"email": "novo@email.com",
 	"phone": "11999999999",
+	"avatar_url": "data:image/png;base64,...",
 	"notice_id": 2,
 	"password": "nova-senha",
 	"password_confirmation": "nova-senha"
 }
 ```
+
+Notas:
+- `avatar_url` deve ser enviado como data URL (base64). A coluna no banco é `LONGTEXT` para comportar imagens maiores.
 
 ### Upload de materiais (multipart/form-data)
 - Campos: `user_id`, `subject_id`, `type`, `file`
