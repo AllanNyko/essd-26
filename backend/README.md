@@ -34,6 +34,7 @@
 - Cadastrar nota: `POST /api/notes`
 - Consultar pontuação: `GET /api/scores?user_id={id}` (auth planejada)
 - Atualizar pontuação: `PATCH /api/scores` (auth planejada)
+- Ranking por média de notas: `GET /api/ranking` (opcional: `notice_id`)
 
 ### Exclusão
 - Os endpoints `DELETE` removem o registro definitivamente.
@@ -253,6 +254,25 @@ Retorna array de matérias com `id` e `name`.
 	"timed_out": false,
 	"game_mode": "individual",
 	"time_left": 12
+}
+```
+
+### Ranking
+Retorna a média das notas por usuário, ordenada de forma decrescente.
+
+Exemplo de resposta:
+```json
+{
+	"ranking": [
+		{
+			"id": 4,
+			"name": "Usuario 01",
+			"email": "user01@essd.local",
+			"average_score": 7.5,
+			"total_score": 22.5,
+			"total_notes": 3
+		}
+	]
 }
 ```
 

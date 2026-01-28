@@ -1,136 +1,187 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { API_BASE_URL, parseJson } from '../../lib/api'
 import './Ranking.css'
 
 const Ranking = () => {
   const [showScrollTop, setShowScrollTop] = useState(false)
-  const ranking = [
+  const [ranking, setRanking] = useState([])
+  const [loading, setLoading] = useState(true)
+  const currentUserId = useMemo(() => {
+    const storedUser = localStorage.getItem('essd_user')
+    const currentUser = storedUser ? JSON.parse(storedUser) : null
+    return currentUser?.id ?? 5
+  }, [])
+  const users = useMemo(() => ([
     {
       id: 1,
       name: 'Ana Souza',
       avatar: 'https://i.pravatar.cc/80?img=32',
-      average: '8,7',
       points: 1280,
     },
     {
       id: 2,
       name: 'Bruno Lima',
       avatar: 'https://i.pravatar.cc/80?img=12',
-      average: '8,4',
       points: 1195,
     },
     {
       id: 3,
       name: 'Carla Menezes',
       avatar: 'https://i.pravatar.cc/80?img=47',
-      average: '8,1',
       points: 1102,
     },
     {
       id: 4,
       name: 'Diego Almeida',
       avatar: 'https://i.pravatar.cc/80?img=21',
-      average: '8,0',
       points: 1040,
     },
     {
       id: 5,
       name: 'Eduarda Reis',
       avatar: 'https://i.pravatar.cc/80?img=18',
-      average: '7,9',
       points: 980,
     },
     {
       id: 6,
       name: 'Felipe Rocha',
       avatar: 'https://i.pravatar.cc/80?img=5',
-      average: '7,8',
       points: 945,
     },
     {
       id: 7,
       name: 'Gabriela Nunes',
       avatar: 'https://i.pravatar.cc/80?img=9',
-      average: '7,7',
       points: 910,
     },
     {
       id: 8,
       name: 'Henrique Paiva',
       avatar: 'https://i.pravatar.cc/80?img=24',
-      average: '7,6',
       points: 880,
     },
     {
       id: 9,
       name: 'Isabela Costa',
       avatar: 'https://i.pravatar.cc/80?img=27',
-      average: '7,5',
       points: 845,
     },
     {
       id: 10,
       name: 'João Pedro',
       avatar: 'https://i.pravatar.cc/80?img=30',
-      average: '7,4',
       points: 820,
     },
     {
       id: 11,
       name: 'Karen Oliveira',
       avatar: 'https://i.pravatar.cc/80?img=41',
-      average: '7,3',
       points: 795,
     },
     {
       id: 12,
       name: 'Lucas Ferreira',
       avatar: 'https://i.pravatar.cc/80?img=36',
-      average: '7,2',
       points: 770,
     },
     {
       id: 13,
       name: 'Marina Dias',
       avatar: 'https://i.pravatar.cc/80?img=44',
-      average: '7,1',
       points: 745,
     },
     {
       id: 14,
       name: 'Nicolas Batista',
       avatar: 'https://i.pravatar.cc/80?img=52',
-      average: '7,0',
       points: 720,
     },
     {
       id: 15,
       name: 'Otávia Ramos',
       avatar: 'https://i.pravatar.cc/80?img=56',
-      average: '6,9',
       points: 695,
     },
     {
       id: 16,
       name: 'Paulo Henrique',
       avatar: 'https://i.pravatar.cc/80?img=58',
-      average: '6,8',
       points: 670,
     },
     {
       id: 17,
       name: 'Renata Lopes',
       avatar: 'https://i.pravatar.cc/80?img=60',
-      average: '6,7',
       points: 645,
     },
     {
       id: 18,
       name: 'Samuel Freitas',
       avatar: 'https://i.pravatar.cc/80?img=62',
-      average: '6,6',
       points: 620,
     },
-  ]
+  ]), [])
+
+  useEffect(() => {
+    let active = true
+
+    const loadRanking = async () => {
+      setLoading(true)
+      try {
+        const response = await fetch(`${API_BASE_URL}/ranking`, {
+          headers: { 'Accept': 'application/json' },
+        })
+        const data = await parseJson(response)
+
+        if (!response.ok || !Array.isArray(data?.ranking)) {
+          return
+        }
+
+        const fallbackById = users.reduce((acc, user) => {
+          acc[user.id] = user
+          return acc
+        }, {})
+
+        const normalized = data.ranking
+          .map((entry) => ({
+            id: entry.id,
+            name: entry.name,
+            avatar: fallbackById[entry.id]?.avatar,
+            points: Number(entry.total_score ?? 0),
+            average: Number(entry.average_score ?? 0),
+          }))
+          .sort((a, b) => b.average - a.average)
+          .map((entry, index) => ({ ...entry, rank: index + 1 }))
+
+        if (active) {
+          setRanking(normalized)
+        }
+      } finally {
+        if (active) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadRanking()
+
+    return () => {
+      active = false
+    }
+  }, [users])
+
+  const formatAverage = (value) => Number(value).toFixed(1).replace('.', ',')
+
+  const rankingData = ranking.length > 0
+    ? ranking
+    : users.map((user, index) => ({
+      ...user,
+      average: 0,
+      rank: index + 1,
+    }))
+
+  const currentUser = rankingData.find((user) => user.id === currentUserId)
+  const rankingList = rankingData.filter((user) => user.id !== currentUserId)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -158,28 +209,35 @@ const Ranking = () => {
 
       <div className="ranking-user-card">
         <div className="ranking-user">
+          <div className="ranking-position">#{currentUser?.rank ?? '-'}</div>
           <div className="ranking-avatar" aria-hidden="true">
-            <img src="https://i.pravatar.cc/80?img=15" alt="Seu avatar" />
+            <img src={currentUser?.avatar || 'https://i.pravatar.cc/80?img=15'} alt="Seu avatar" />
           </div>
           <div className="ranking-info">
-            <span className="ranking-name">Seu desempenho</span>
-            <span className="ranking-metric">Média: 8,9</span>
+            <span className="ranking-name">{currentUser?.name || 'Seu desempenho'}</span>
+            <span className="ranking-metric">
+              Média: {currentUser ? formatAverage(currentUser.average) : (loading ? '...' : '-')}
+            </span>
           </div>
-          <div className="ranking-points">1420 pts</div>
+          <div className="ranking-points">
+            {currentUser?.points ?? (loading ? '...' : '-')} pts
+          </div>
         </div>
       </div>
 
       <div className="ranking-card">
         <div className="ranking-list">
-          {ranking.map((user, index) => (
+          {rankingList.map((user) => (
             <div className="ranking-item" key={user.id}>
-              <div className="ranking-position">#{index + 1}</div>
+              <div className="ranking-position">#{user.rank}</div>
               <div className="ranking-avatar" aria-hidden="true">
-                <img src={user.avatar} alt={user.name} />
+                <img src={user.avatar || 'https://i.pravatar.cc/80?img=15'} alt={user.name} />
               </div>
               <div className="ranking-info">
                 <span className="ranking-name">{user.name}</span>
-                <span className="ranking-metric">Média: {user.average}</span>
+                <span className="ranking-metric">
+                  Média: {formatAverage(user.average)}
+                </span>
               </div>
               <div className="ranking-points">{user.points} pts</div>
             </div>

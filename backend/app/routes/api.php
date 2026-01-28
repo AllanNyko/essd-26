@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\PlanController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\QuizController;
+use App\Http\Controllers\Api\RankingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\UserScoreController;
 use App\Http\Controllers\Api\GameSessionController;
@@ -20,6 +21,7 @@ Route::get('/health', function () {
 
 Route::get('/scores', [UserScoreController::class, 'show']);
 Route::patch('/scores', [UserScoreController::class, 'update']);
+Route::get('/ranking', [RankingController::class, 'index']);
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
