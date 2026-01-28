@@ -32,14 +32,21 @@ class NoteController extends Controller
     {
         $data = $request->validated();
 
-        $existing = Note::query()
+        $existingQuery = Note::query()
             ->where('user_id', $data['user_id'])
-            ->where('subject_id', $data['subject_id'])
-            ->exists();
+            ->where('subject_id', $data['subject_id']);
+
+        if (array_key_exists('notice_id', $data) && $data['notice_id'] !== null) {
+            $existingQuery->where('notice_id', $data['notice_id']);
+        } else {
+            $existingQuery->whereNull('notice_id');
+        }
+
+        $existing = $existingQuery->exists();
 
         if ($existing) {
             return response()->json([
-                'message' => 'Você já registrou nota para esta matéria.',
+                'message' => 'Você já registrou nota para esta matéria neste edital.',
             ], 409);
         }
 

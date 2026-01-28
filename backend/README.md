@@ -222,6 +222,8 @@ Retorna array de matérias com `id` e `name`.
 }
 ```
 
+**Regra:** o usuário pode registrar uma nota por matéria para cada edital. Para o mesmo `user_id` e `subject_id`, é permitido repetir a nota quando o `notice_id` for diferente.
+
 ### Criar quizz
 ```json
 {
