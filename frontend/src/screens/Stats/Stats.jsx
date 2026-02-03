@@ -2,58 +2,25 @@ import { useEffect, useMemo, useState } from 'react'
 import { API_BASE_URL, parseJson } from '../../lib/api'
 import './Stats.css'
 
-const PERIODS = [
-  { value: '7', label: 'Últimos 7 dias' },
-  { value: '30', label: 'Últimos 30 dias' },
-  { value: '90', label: 'Últimos 90 dias' },
-  { value: 'all', label: 'Todo o período' },
-]
-
-const formatPercent = (value) => `${Math.round(value)}%`
-
-const clampPercent = (value) => Math.max(0, Math.min(100, value || 0))
-
 const formatAverage = (value) => (
   Number(value || 0).toLocaleString('pt-BR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 3,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   })
 )
 
-const buildLinePoints = (series) => {
-  if (!series.length) return ''
-  if (series.length === 1) {
-    return `0,${100 - series[0].percent}`
-  }
-
-  return series
-    .map((item, index) => {
-      const x = (index / (series.length - 1)) * 100
-      const y = 100 - item.percent
-      return `${x},${y}`
-    })
-    .join(' ')
-}
-
 const Stats = () => {
   const [subjects, setSubjects] = useState([])
-  const [notices, setNotices] = useState([])
   const [notes, setNotes] = useState([])
-  const [ranking, setRanking] = useState([])
-  const [score, setScore] = useState(null)
-  const [quizStatsData, setQuizStatsData] = useState({
-    stats: { total_questions: 0, hits: 0, errors: 0, accuracy_percentage: 0 },
-    subjects: [],
-  })
+  const [allUsers, setAllUsers] = useState([])
   const [comparisonNotes, setComparisonNotes] = useState([])
   const [status, setStatus] = useState({ loading: true, error: '' })
 
-  const [period, setPeriod] = useState('30')
-  const [subjectFilter, setSubjectFilter] = useState('all')
-  const [noticeFilter, setNoticeFilter] = useState('all')
-  const [comparison, setComparison] = useState('media')
+  const [comparisonType, setComparisonType] = useState('global')
   const [comparisonUserId, setComparisonUserId] = useState('')
-  const [quizSubjectFilter, setQuizSubjectFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [pointTooltip, setPointTooltip] = useState(null)
+  const [subjectTooltip, setSubjectTooltip] = useState(null)
 
   const storedUser = localStorage.getItem('essd_user')
   const currentUser = storedUser ? JSON.parse(storedUser) : null
@@ -62,7 +29,7 @@ const Stats = () => {
   useEffect(() => {
     let active = true
 
-    const loadInitialData = async () => {
+    const loadData = async () => {
       if (!userId) {
         if (active) {
           setStatus({ loading: false, error: 'Usuário não autenticado.' })
@@ -73,44 +40,35 @@ const Stats = () => {
       setStatus({ loading: true, error: '' })
 
       try {
-        const [subjectsResponse, noticesResponse, notesResponse, rankingResponse, scoreResponse] =
-          await Promise.all([
-            fetch(`${API_BASE_URL}/subjects`, { headers: { Accept: 'application/json' } }),
-            fetch(`${API_BASE_URL}/notices`, { headers: { Accept: 'application/json' } }),
-            fetch(`${API_BASE_URL}/notes?user_id=${userId}`, { headers: { Accept: 'application/json' } }),
-            fetch(`${API_BASE_URL}/ranking`, { headers: { Accept: 'application/json' } }),
-            fetch(`${API_BASE_URL}/scores?user_id=${userId}`, { headers: { Accept: 'application/json' } }),
-          ])
+        const [subjectsResponse, notesResponse, rankingResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/subjects`, { headers: { Accept: 'application/json' } }),
+          fetch(`${API_BASE_URL}/notes?user_id=${userId}`, { headers: { Accept: 'application/json' } }),
+          fetch(`${API_BASE_URL}/ranking`, { headers: { Accept: 'application/json' } }),
+        ])
 
         const subjectsData = await parseJson(subjectsResponse)
-        const noticesData = await parseJson(noticesResponse)
         const notesData = await parseJson(notesResponse)
         const rankingData = await parseJson(rankingResponse)
-        const scoreData = await parseJson(scoreResponse)
 
-        if (!active) {
-          return
-        }
+        if (!active) return
 
         setSubjects(subjectsData?.subjects || [])
-        setNotices(noticesData?.notices || [])
         setNotes(notesData?.notes || [])
-        setRanking(rankingData?.ranking || [])
-        setScore(scoreData?.score || null)
+        setAllUsers(rankingData?.ranking || [])
 
-        if ((rankingData?.ranking || []).length > 0) {
+        if ((rankingData?.ranking || []).length > 0 && !comparisonUserId) {
           setComparisonUserId(String(rankingData.ranking[0].id))
         }
 
         setStatus({ loading: false, error: '' })
       } catch (error) {
         if (active) {
-          setStatus({ loading: false, error: error.message || 'Não foi possível carregar as estatísticas.' })
+          setStatus({ loading: false, error: error.message || 'Erro ao carregar dados.' })
         }
       }
     }
 
-    loadInitialData()
+    loadData()
 
     return () => {
       active = false
@@ -120,53 +78,8 @@ const Stats = () => {
   useEffect(() => {
     let active = true
 
-    const loadQuizStats = async () => {
-      if (!userId) {
-        return
-      }
-
-      const params = new URLSearchParams({ user_id: String(userId) })
-      if (quizSubjectFilter !== 'all') {
-        params.set('subject_id', quizSubjectFilter)
-      }
-      if (period !== 'all') {
-        params.set('period_days', period)
-      }
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/quiz-stats?${params.toString()}`, {
-          headers: { Accept: 'application/json' },
-        })
-        const data = await parseJson(response)
-
-        if (response.ok && active) {
-          setQuizStatsData({
-            stats: data?.stats || { total_questions: 0, hits: 0, errors: 0, accuracy_percentage: 0 },
-            subjects: data?.subjects || [],
-          })
-        }
-      } catch {
-        if (active) {
-          setQuizStatsData({
-            stats: { total_questions: 0, hits: 0, errors: 0, accuracy_percentage: 0 },
-            subjects: [],
-          })
-        }
-      }
-    }
-
-    loadQuizStats()
-
-    return () => {
-      active = false
-    }
-  }, [period, quizSubjectFilter, userId])
-
-  useEffect(() => {
-    let active = true
-
     const loadComparisonNotes = async () => {
-      if (comparison !== 'usuario' || !comparisonUserId) {
+      if (comparisonType !== 'user' || !comparisonUserId) {
         setComparisonNotes([])
         return
       }
@@ -192,228 +105,136 @@ const Stats = () => {
     return () => {
       active = false
     }
-  }, [comparison, comparisonUserId])
+  }, [comparisonType, comparisonUserId])
 
-  const filterNotesBySettings = (notesList) => {
-    const now = new Date()
-    const days = period === 'all' ? null : Number(period)
+  const userAverage = useMemo(() => {
+    const totalSubjects = subjects.length
+    if (totalSubjects === 0) return 0
 
-    return notesList.filter((note) => {
-      if (noticeFilter !== 'all' && String(note.notice_id) !== noticeFilter) {
-        return false
-      }
-
-      if (subjectFilter !== 'all' && String(note.subject_id) !== subjectFilter) {
-        return false
-      }
-
-      if (!days) {
-        return true
-      }
-
-      if (!note.created_at) {
-        return true
-      }
-
-      const createdAt = new Date(note.created_at)
-      if (Number.isNaN(createdAt.getTime())) {
-        return true
-      }
-
-      const diffTime = now.getTime() - createdAt.getTime()
-      const diffDays = diffTime / (1000 * 60 * 60 * 24)
-      return diffDays <= days
-    })
-  }
-
-  const filteredNotes = useMemo(() => (
-    filterNotesBySettings(notes)
-  ), [notes, noticeFilter, period, subjectFilter])
-
-  const filteredComparisonNotes = useMemo(() => (
-    filterNotesBySettings(comparisonNotes)
-  ), [comparisonNotes, noticeFilter, period, subjectFilter])
-
-  const filteredSubjects = useMemo(() => {
-    if (subjectFilter === 'all') {
-      return subjects
-    }
-
-    return subjects.filter((subject) => String(subject.id) === subjectFilter)
-  }, [subjects, subjectFilter])
-
-  const overallAverage = useMemo(() => {
-    const totalSubjects = filteredSubjects.length
-    if (totalSubjects === 0) {
-      return 0
-    }
-
-    const totalScore = filteredNotes.reduce((acc, note) => acc + (Number(note.score) || 0), 0)
+    const totalScore = notes.reduce((acc, note) => acc + (Number(note.score) || 0), 0)
     return totalScore / totalSubjects
-  }, [filteredNotes, filteredSubjects.length])
+  }, [notes, subjects.length])
 
-  const globalAveragePercent = useMemo(() => {
-    if (!ranking.length) {
-      return 0
-    }
+  const globalAverage = useMemo(() => {
+    if (!allUsers.length) return 0
 
-    const sum = ranking.reduce((acc, item) => acc + (Number(item.average_score) || 0), 0)
-    return clampPercent((sum / ranking.length) * 10)
-  }, [ranking])
+    const sum = allUsers.reduce((acc, user) => acc + (Number(user.average_score) || 0), 0)
+    return sum / allUsers.length
+  }, [allUsers])
 
   const comparisonAverage = useMemo(() => {
-    if (comparison === 'media') {
-      return globalAveragePercent / 10
+    if (comparisonType === 'global') {
+      return globalAverage
     }
 
-    if (!comparisonUserId) {
-      return 0
-    }
+    const totalSubjects = subjects.length
+    if (totalSubjects === 0) return 0
 
-    const totalSubjects = filteredSubjects.length
-    if (totalSubjects === 0) {
-      return 0
-    }
-
-    const totalScore = filteredComparisonNotes.reduce((acc, note) => acc + (Number(note.score) || 0), 0)
-
+    const totalScore = comparisonNotes.reduce((acc, note) => acc + (Number(note.score) || 0), 0)
     return totalScore / totalSubjects
-  }, [comparison, filteredComparisonNotes, filteredSubjects.length, globalAveragePercent])
+  }, [comparisonType, globalAverage, comparisonNotes, subjects.length])
 
-  const comparisonDiff = overallAverage - comparisonAverage
+  const difference = userAverage - comparisonAverage
 
-  const quizStats = useMemo(() => {
-    const totalFromStats = Number(quizStatsData?.stats?.total_questions || 0)
-    const statsHits = Number(quizStatsData?.stats?.hits || 0)
-    const statsErrors = Number(quizStatsData?.stats?.errors || 0)
-    const scoreHits = (score?.individual_hits || 0) + (score?.survivor_hits || 0)
-    const scoreErrors = (score?.individual_errors || 0) + (score?.survivor_errors || 0)
+  const filteredUsers = useMemo(() => {
+    if (!searchTerm) return allUsers
 
-    const useScoreFallback = quizSubjectFilter === 'all' && totalFromStats === 0
-    const hits = useScoreFallback ? scoreHits : statsHits
-    const errors = useScoreFallback ? scoreErrors : statsErrors
-    const total = hits + errors
-    const accuracy = total > 0 ? (hits / total) * 100 : 0
-
-    return {
-      hits,
-      errors,
-      total,
-      accuracy: clampPercent(accuracy),
-      errorsPercent: clampPercent(total > 0 ? 100 - accuracy : 0),
-      points: (score?.individual_points || 0) + (score?.survivor_points || 0),
-    }
-  }, [quizStatsData, quizSubjectFilter, score])
-
-  const orderedSubjects = useMemo(() => {
-    const subjectMap = new Map(filteredSubjects.map((subject) => [String(subject.id), subject]))
-    const orderedByNote = [...filteredNotes]
-      .sort((a, b) => {
-        const aDate = new Date(a.created_at)
-        const bDate = new Date(b.created_at)
-        const aTime = Number.isNaN(aDate.getTime()) ? 0 : aDate.getTime()
-        const bTime = Number.isNaN(bDate.getTime()) ? 0 : bDate.getTime()
-        if (aTime === bTime) {
-          return (Number(a.id) || 0) - (Number(b.id) || 0)
-        }
-        return aTime - bTime
-      })
-      .map((note) => String(note.subject_id))
-      .filter((id, index, arr) => arr.indexOf(id) === index)
-      .map((id) => subjectMap.get(id))
-      .filter(Boolean)
-
-    const remaining = filteredSubjects.filter(
-      (subject) => !orderedByNote.some((item) => item.id === subject.id),
+    const term = searchTerm.toLowerCase()
+    return allUsers.filter((user) => 
+      user.name.toLowerCase().includes(term) || 
+      String(user.id).includes(term)
     )
+  }, [allUsers, searchTerm])
 
-    return [...orderedByNote, ...remaining]
-  }, [filteredNotes, filteredSubjects])
+  const selectedUser = useMemo(() => {
+    return allUsers.find((user) => String(user.id) === String(comparisonUserId))
+  }, [allUsers, comparisonUserId])
 
-  const quizSubjects = useMemo(() => {
-    if (!quizStatsData?.subjects?.length) {
-      return []
-    }
-
-    const statsMap = new Map(
-      quizStatsData.subjects.map((item) => [String(item.subject_id), item]),
-    )
-
-    const ordered = orderedSubjects
-      .map((subject) => statsMap.get(String(subject.id)))
-      .filter(Boolean)
-
-    return ordered.map((item) => ({
-      id: item.subject_id,
-      name: item.subject_name,
-      hits: item.hits,
-      errors: item.errors,
-      accuracy: clampPercent(Number(item.accuracy_percentage || 0)),
-      total: item.total_questions,
-    }))
-  }, [orderedSubjects, quizStatsData])
-
-  const selectedQuizSubject = useMemo(() => {
-    if (quizSubjectFilter === 'all') {
-      return null
-    }
-
-    return quizSubjects.find((subject) => String(subject.id) === String(quizSubjectFilter)) || null
-  }, [quizSubjectFilter, quizSubjects])
-
-  const displayQuizStats = useMemo(() => quizStats, [quizStats])
-
-  const subjectSeries = useMemo(() => {
-    const notesBySubject = filteredNotes.reduce((acc, note) => {
-      acc[String(note.subject_id)] = Number(note.score) || 0
-      return acc
-    }, {})
-
-    return orderedSubjects.map((subject) => {
-      const rawScore = notesBySubject[String(subject.id)]
-      const hasScore = typeof rawScore === 'number' && rawScore > 0
-      return {
-        id: subject.id,
-        label: subject.name,
-        percent: clampPercent((rawScore || 0) * 10),
-        missing: !hasScore,
+  // Calcular médias por matéria para o usuário
+  const userSubjectAverages = useMemo(() => {
+    const bySubject = {}
+    notes.forEach(note => {
+      if (!bySubject[note.subject_id]) {
+        bySubject[note.subject_id] = { sum: 0, count: 0, notes: [] }
       }
+      bySubject[note.subject_id].sum += Number(note.score) || 0
+      bySubject[note.subject_id].count += 1
+      bySubject[note.subject_id].notes.push(Number(note.score) || 0)
     })
-  }, [filteredNotes, orderedSubjects])
+    return Object.entries(bySubject).map(([subjectId, data]) => ({
+      subjectId: parseInt(subjectId),
+      average: data.sum / data.count,
+      notes: data.notes
+    }))
+  }, [notes])
 
-  const comparisonSeries = useMemo(() => {
-    if (comparison === 'media') {
-      return subjectSeries.map((subject) => ({
-        ...subject,
-        percent: globalAveragePercent,
-        missing: false,
+  // Calcular médias por matéria para a comparação
+  const comparisonSubjectAverages = useMemo(() => {
+    if (comparisonType === 'global') {
+      // Média global por matéria: calcular média de todos os usuários para cada matéria
+      const bySubject = {}
+      allUsers.forEach(user => {
+        const userNotes = user.notes || []
+        userNotes.forEach(note => {
+          if (!bySubject[note.subject_id]) {
+            bySubject[note.subject_id] = { sum: 0, count: 0, notes: [] }
+          }
+          bySubject[note.subject_id].sum += Number(note.score) || 0
+          bySubject[note.subject_id].count += 1
+          bySubject[note.subject_id].notes.push(Number(note.score) || 0)
+        })
+      })
+      return Object.entries(bySubject).map(([subjectId, data]) => ({
+        subjectId: parseInt(subjectId),
+        average: data.sum / data.count,
+        notes: data.notes
+      }))
+    } else {
+      // Média do usuário selecionado por matéria
+      const bySubject = {}
+      comparisonNotes.forEach(note => {
+        if (!bySubject[note.subject_id]) {
+          bySubject[note.subject_id] = { sum: 0, count: 0, notes: [] }
+        }
+        bySubject[note.subject_id].sum += Number(note.score) || 0
+        bySubject[note.subject_id].count += 1
+        bySubject[note.subject_id].notes.push(Number(note.score) || 0)
+      })
+      return Object.entries(bySubject).map(([subjectId, data]) => ({
+        subjectId: parseInt(subjectId),
+        average: data.sum / data.count,
+        notes: data.notes
       }))
     }
+  }, [comparisonType, comparisonNotes, allUsers])
 
-    const notesBySubject = filteredComparisonNotes.reduce((acc, note) => {
-      acc[String(note.subject_id)] = Number(note.score) || 0
-      return acc
-    }, {})
-
-    return orderedSubjects.map((subject) => {
-      const rawScore = notesBySubject[String(subject.id)]
-      const hasScore = typeof rawScore === 'number' && rawScore > 0
+  // Preparar dados do gráfico
+  const chartData = useMemo(() => {
+    const data = subjects.map(subject => {
+      const userAvg = userSubjectAverages.find(s => s.subjectId === subject.id)
+      const compAvg = comparisonSubjectAverages.find(s => s.subjectId === subject.id)
       return {
-        id: subject.id,
-        label: subject.name,
-        percent: clampPercent((rawScore || 0) * 10),
-        missing: !hasScore,
+        subject,
+        userAverage: userAvg?.average || 0,
+        userNotes: userAvg?.notes || [],
+        comparisonAverage: compAvg?.average || 0,
+        comparisonNotes: compAvg?.notes || []
       }
     })
-  }, [comparison, filteredComparisonNotes, orderedSubjects, globalAveragePercent, subjectSeries])
+    return data
+  }, [subjects, userSubjectAverages, comparisonSubjectAverages])
 
-  const periodLabel = PERIODS.find((item) => item.value === period)?.label || 'Todo o período'
+  // Função para encurtar nome da matéria
+  const shortenSubjectName = (name) => {
+    if (name.length <= 12) return name
+    return name.substring(0, 12) + '...'
+  }
 
   return (
     <section className="stats">
       <header className="stats-header">
         <h2>Central de Estatísticas</h2>
-        <p>Visão geral de desempenho, acertos, erros e progresso.</p>
+        <p>Análise completa de desempenho e comparação com outros usuários.</p>
       </header>
 
       {status.loading && (
@@ -428,253 +249,290 @@ const Stats = () => {
         </div>
       )}
 
-      <div className="stats-filters">
-        <div className="stats-filter">
-          <label htmlFor="periodo">Período</label>
-          <select id="periodo" value={period} onChange={(event) => setPeriod(event.target.value)}>
-            {PERIODS.map((item) => (
-              <option key={item.value} value={item.value}>{item.label}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="stats-filter">
-          <label htmlFor="materia">Matéria</label>
-          <select
-            id="materia"
-            value={subjectFilter}
-            onChange={(event) => setSubjectFilter(event.target.value)}
-          >
-            <option value="all">Todas</option>
-            {subjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="stats-filter">
-          <label htmlFor="edital">Edital</label>
-          <select id="edital" value={noticeFilter} onChange={(event) => setNoticeFilter(event.target.value)}>
-            <option value="all">Todos</option>
-            {notices.map((notice) => (
-              <option key={notice.id} value={notice.id}>{notice.name}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="stats-filter">
-          <label htmlFor="comparacao">Comparação</label>
-          <select id="comparacao" value={comparison} onChange={(event) => setComparison(event.target.value)}>
-            <option value="media">Média geral</option>
-            <option value="usuario">Usuário específico</option>
-          </select>
-        </div>
-
-        <div className="stats-filter">
-          <label htmlFor="usuario">Usuário</label>
-          <select
-            id="usuario"
-            value={comparisonUserId}
-            onChange={(event) => setComparisonUserId(event.target.value)}
-            disabled={comparison !== 'usuario'}
-          >
-            {ranking.length === 0 && <option value="">Sem usuários</option>}
-            {ranking.map((user) => (
-              <option key={user.id} value={user.id}>{user.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="stats-grid">
-        <div className="stats-card stats-summary">
-          <div>
-            <p className="stats-label">Média geral do aluno</p>
-            <h3>{formatAverage(overallAverage)}</h3>
-            <p className="stats-help">Cálculo: soma das notas ÷ total de matérias</p>
-          </div>
-          <div>
-            <p className="stats-label">Comparação selecionada</p>
-            <h3>{formatAverage(comparisonAverage)}</h3>
-            <p className={`stats-diff ${comparisonDiff >= 0 ? 'positive' : 'negative'}`}>
-              {comparisonDiff >= 0 ? '+' : ''}{formatAverage(Math.abs(comparisonDiff))} {comparisonDiff >= 0 ? 'acima' : 'abaixo'}
-            </p>
-          </div>
-        </div>
-
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <div>
-              <h3>Evolução ao longo das provas</h3>
-              <p>Comparativo da média do aluno com a média geral ou outro usuário.</p>
+      {!status.loading && !status.error && (
+        <div className="stats-grid">
+          <div className="stats-card">
+            <div className="stats-card-header">
+              <h3>Comparação de Médias</h3>
+              <p>Veja como sua média se compara com a média global ou com outro usuário.</p>
             </div>
-            <span className="stats-badge">{periodLabel}</span>
-          </div>
-          {subjectSeries.length === 0 ? (
-            <div className="stats-empty">Registre notas para visualizar a evolução ao longo do tempo.</div>
-          ) : (
-            <div className="stats-line-chart">
-              <svg className="stats-line-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                {comparisonSeries.length > 0 && (
-                  <polyline
-                    className="stats-line-path stats-line-path--compare"
-                    points={buildLinePoints(comparisonSeries)}
-                  />
-                )}
-                {subjectSeries.length > 0 && (
-                  <polyline
-                    className="stats-line-path stats-line-path--user"
-                    points={buildLinePoints(subjectSeries)}
-                  />
-                )}
-              </svg>
-              <div className="stats-line-dots">
-                {comparisonSeries.map((item, index) => (
-                  <span
-                    key={`c-${item.label}-${index}`}
-                    className={`stats-line-dot stats-line-dot--compare${item.missing ? ' stats-line-dot--missing' : ''}`}
-                    style={{
-                      left: `${comparisonSeries.length === 1 ? 0 : (index / (comparisonSeries.length - 1)) * 100}%`,
-                      bottom: `${item.percent}%`,
-                    }}
-                    title={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                    aria-label={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                    data-tooltip={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                  />
-                ))}
-                {subjectSeries.map((item, index) => (
-                  <span
-                    key={`u-${item.label}-${index}`}
-                    className={`stats-line-dot stats-line-dot--user${item.missing ? ' stats-line-dot--missing' : ''}`}
-                    style={{
-                      left: `${subjectSeries.length === 1 ? 0 : (index / (subjectSeries.length - 1)) * 100}%`,
-                      bottom: `${item.percent}%`,
-                    }}
-                    title={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                    aria-label={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                    data-tooltip={`${item.label} • ${item.missing ? 'Sem nota' : formatPercent(item.percent)}`}
-                  />
-                ))}
-              </div>
-              <div className="stats-line-legend">
-                <span><i className="dot dot-user" />Aluno</span>
-                <span><i className="dot dot-compare" />{comparison === 'media' ? 'Média geral' : 'Usuário comparado'}</span>
-              </div>
-              <div className="stats-line-labels">
-                {subjectSeries.map((item, index) => (
-                  <span key={`${item.label}-${index}`}>{item.label}</span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
 
-        <div className="stats-card">
-          <div className="stats-card-header">
-            <div>
-              <h3>Desempenho em Quizz</h3>
-              <p>Taxa de acertos e erros no total e por matéria.</p>
-            </div>
-            <div className="stats-card-actions">
-              <span className="stats-badge">Todos os modos</span>
-              <div className="stats-filter stats-filter--inline">
-                <label htmlFor="quiz-materia">Matéria</label>
+            <div className="comparison-controls">
+              <div className="stats-filter">
+                <label htmlFor="comparison-type">Comparar com</label>
                 <select
-                  id="quiz-materia"
-                  value={quizSubjectFilter}
-                  onChange={(event) => setQuizSubjectFilter(event.target.value)}
+                  id="comparison-type"
+                  value={comparisonType}
+                  onChange={(e) => setComparisonType(e.target.value)}
                 >
-                  <option value="all">Todas</option>
-                  {subjects.map((subject) => (
-                    <option key={subject.id} value={subject.id}>{subject.name}</option>
-                  ))}
+                  <option value="global">Média Global</option>
+                  <option value="user">Outro Usuário</option>
                 </select>
               </div>
+
+              {comparisonType === 'user' && (
+                <>
+                  <div className="stats-filter">
+                    <label htmlFor="user-search">Buscar usuário (nome ou ID)</label>
+                    <input
+                      id="user-search"
+                      type="text"
+                      placeholder="Digite nome ou ID..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="stats-filter">
+                    <label htmlFor="comparison-user">Selecionar usuário</label>
+                    <select
+                      id="comparison-user"
+                      value={comparisonUserId}
+                      onChange={(e) => setComparisonUserId(e.target.value)}
+                    >
+                      {filteredUsers.length === 0 && <option value="">Nenhum usuário encontrado</option>}
+                      {filteredUsers.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.name} (ID: {user.id})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="comparison-results">
+              <div className="comparison-metric">
+                <span className="comparison-label">Sua Média</span>
+                <strong className="comparison-value">{formatAverage(userAverage)}</strong>
+                <span className="comparison-help">Baseado em {notes.length} nota{notes.length !== 1 ? 's' : ''}</span>
+              </div>
+
+              <div className="comparison-divider">
+                <span className={`comparison-indicator ${difference >= 0 ? 'positive' : 'negative'}`}>
+                  {difference >= 0 ? '↑' : '↓'} {formatAverage(Math.abs(difference))}
+                </span>
+                <span className="comparison-status">
+                  {difference >= 0 ? 'acima' : 'abaixo'}
+                </span>
+              </div>
+
+              <div className="comparison-metric">
+                <span className="comparison-label">
+                  {comparisonType === 'global' ? 'Média Global' : `Média de ${selectedUser?.name || 'Usuário'}`}
+                </span>
+                <strong className="comparison-value">{formatAverage(comparisonAverage)}</strong>
+                <span className="comparison-help">
+                  {comparisonType === 'global' 
+                    ? `Baseado em ${allUsers.length} usuário${allUsers.length !== 1 ? 's' : ''}`
+                    : `Baseado em ${comparisonNotes.length} nota${comparisonNotes.length !== 1 ? 's' : ''}`
+                  }
+                </span>
+              </div>
             </div>
           </div>
-          <div className="quiz-chart">
-            <div className="quiz-metric">
-              <span>Taxa de acertos{selectedQuizSubject ? ` (${selectedQuizSubject.name})` : ' geral'}</span>
-              <strong>{displayQuizStats.hits}</strong>
-              <div className="quiz-meter">
-                <span style={{ width: `${displayQuizStats.accuracy}%` }} />
-              </div>
-              <small>{formatPercent(displayQuizStats.accuracy)} de acerto</small>
+
+          {/* Card: Gráfico por Matéria */}
+          <div className="stats-card">
+            <div className="stats-card-header">
+              <h3>Desempenho por Matéria</h3>
+              <p>
+                Comparação das médias entre {comparisonType === 'global' ? 'você e a média geral' : selectedUser ? `você e ${selectedUser.name}` : 'você e outro usuário'}
+              </p>
             </div>
-            <div className="quiz-metric">
-              <span>Taxa de erros{selectedQuizSubject ? ` (${selectedQuizSubject.name})` : ' geral'}</span>
-              <strong>{displayQuizStats.errors}</strong>
-              <div className="quiz-meter quiz-meter--danger">
-                <span style={{ width: `${displayQuizStats.errorsPercent}%` }} />
+
+            {chartData.length === 0 ? (
+              <div className="stats-status stats-status--loading">
+                Nenhuma matéria disponível
               </div>
-              <small>{formatPercent(displayQuizStats.errorsPercent)} de erro</small>
-            </div>
-            <div className="quiz-summary">
-              <div>
-                <p>Acertos totais{selectedQuizSubject ? ` (${selectedQuizSubject.name})` : ''}</p>
-                <strong>{displayQuizStats.hits}</strong>
-              </div>
-              <div>
-                <p>Erros totais{selectedQuizSubject ? ` (${selectedQuizSubject.name})` : ''}</p>
-                <strong>{displayQuizStats.errors}</strong>
-              </div>
-              <div>
-                <p>Total{selectedQuizSubject ? ` (${selectedQuizSubject.name})` : ''}</p>
-                <strong>{displayQuizStats.total}</strong>
-              </div>
-            </div>
-            {!selectedQuizSubject && (
-              <div className="quiz-summary">
-                <div>
-                  <p>Pontos</p>
-                  <strong>{quizStats.points}</strong>
-                </div>
-              </div>
-            )}
-            <div className="quiz-subjects">
-              <div className="quiz-subjects-header">
-                <h4>Detalhe por matéria</h4>
-                <span>{subjectFilter === 'all' ? 'Todas as matérias' : 'Matéria selecionada'}</span>
-              </div>
-              {quizSubjects.length === 0 ? (
-                <div className="stats-empty">
-                  Sem respostas registradas para o filtro atual.
-                </div>
-              ) : (
-                <div className="quiz-subjects-list">
-                  {quizSubjects.map((subject) => (
-                    <div key={subject.id} className="quiz-subject">
-                      <div className="quiz-subject-header">
-                        <strong>{subject.name}</strong>
-                        <span>{formatPercent(subject.accuracy)}</span>
-                      </div>
-                      <div className="quiz-subject-bars">
-                        <div>
-                          <small>Acertos</small>
-                          <div className="quiz-meter">
-                            <span style={{ width: `${subject.accuracy}%` }} />
-                          </div>
+            ) : (
+              <div className="subject-chart">
+                <svg className="subject-chart-svg" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+                  {/* Grid lines */}
+                  <line x1="60" y1="20" x2="60" y2="220" stroke="#e2e8f0" strokeWidth="2" />
+                  <line x1="60" y1="220" x2="740" y2="220" stroke="#e2e8f0" strokeWidth="2" />
+                  
+                  {/* Y-axis labels */}
+                  {[0, 2.5, 5, 7.5, 10].map((val) => (
+                    <g key={val}>
+                      <line
+                        x1="55"
+                        y1={220 - (val * 20)}
+                        x2="740"
+                        y2={220 - (val * 20)}
+                        stroke="#f1f5f9"
+                        strokeWidth="1"
+                      />
+                      <text
+                        x="50"
+                        y={220 - (val * 20) + 4}
+                        textAnchor="end"
+                        fontSize="12"
+                        fill="#64748b"
+                      >
+                        {val.toFixed(1)}
+                      </text>
+                    </g>
+                  ))}
+
+                  {/* Lines */}
+                  {chartData.length > 1 && (
+                    <>
+                      {/* User line */}
+                      <polyline
+                        points={chartData.map((d, i) => {
+                          const x = 100 + (i * (640 / (chartData.length - 1)))
+                          const y = 220 - (d.userAverage * 20)
+                          return `${x},${y}`
+                        }).join(' ')}
+                        fill="none"
+                        stroke="#2563eb"
+                        strokeWidth="3"
+                      />
+                      
+                      {/* Comparison line */}
+                      <polyline
+                        points={chartData.map((d, i) => {
+                          const x = 100 + (i * (640 / (chartData.length - 1)))
+                          const y = 220 - (d.comparisonAverage * 20)
+                          return `${x},${y}`
+                        }).join(' ')}
+                        fill="none"
+                        stroke="#94a3b8"
+                        strokeWidth="3"
+                        strokeDasharray="5,5"
+                      />
+                    </>
+                  )}
+
+                  {/* Data points */}
+                  {chartData.map((d, i) => {
+                    const x = chartData.length === 1 ? 400 : 100 + (i * (640 / (chartData.length - 1)))
+                    const userY = 220 - (d.userAverage * 20)
+                    const compY = 220 - (d.comparisonAverage * 20)
+                    
+                    return (
+                      <g key={d.subject.id}>
+                        {/* User point */}
+                        <circle
+                          cx={x}
+                          cy={userY}
+                          r="6"
+                          fill="#2563eb"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setPointTooltip(pointTooltip?.id === `user-${d.subject.id}` ? null : {
+                            id: `user-${d.subject.id}`,
+                            x,
+                            y: userY,
+                            title: 'Suas notas',
+                            subject: d.subject.name,
+                            average: d.userAverage,
+                            notes: d.userNotes
+                          })}
+                        />
+                        
+                        {/* Comparison point */}
+                        <circle
+                          cx={x}
+                          cy={compY}
+                          r="6"
+                          fill="#94a3b8"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setPointTooltip(pointTooltip?.id === `comp-${d.subject.id}` ? null : {
+                            id: `comp-${d.subject.id}`,
+                            x,
+                            y: compY,
+                            title: comparisonType === 'global' ? 'Média geral' : selectedUser?.name || 'Outro usuário',
+                            subject: d.subject.name,
+                            average: d.comparisonAverage,
+                            notes: d.comparisonNotes
+                          })}
+                        />
+                      </g>
+                    )
+                  })}
+                </svg>
+
+                {/* X-axis labels (subject names) */}
+                <div className="subject-chart-labels">
+                  {chartData.map((d) => (
+                    <div
+                      key={d.subject.id}
+                      className="subject-label"
+                      onClick={() => setSubjectTooltip(subjectTooltip === d.subject.id ? null : d.subject.id)}
+                    >
+                      {shortenSubjectName(d.subject.name)}
+                      {subjectTooltip === d.subject.id && (
+                        <div className="subject-label-tooltip">
+                          {d.subject.name}
                         </div>
-                        <div>
-                          <small>Erros</small>
-                          <div className="quiz-meter quiz-meter--danger">
-                            <span style={{ width: `${100 - subject.accuracy}%` }} />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="quiz-subject-footer">
-                        <span>Acertos: {subject.hits}</span>
-                        <span>Erros: {subject.errors}</span>
-                        <span>Total: {subject.total}</span>
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
+
+                {/* Legend */}
+                <div className="subject-chart-legend">
+                  <div className="legend-item">
+                    <span className="legend-dot legend-dot--user"></span>
+                    <span>Você</span>
+                  </div>
+                  <div className="legend-item">
+                    <span className="legend-dot legend-dot--comparison"></span>
+                    <span>{comparisonType === 'global' ? 'Média Geral' : selectedUser?.name || 'Outro Usuário'}</span>
+                  </div>
+                </div>
+
+                {/* Point tooltip */}
+                {pointTooltip && (
+                  <div 
+                    className="point-tooltip"
+                    style={{
+                      position: 'absolute',
+                      left: `${(pointTooltip.x / 800) * 100}%`,
+                      top: `${((pointTooltip.y - 40) / 300) * 100}%`,
+                      transform: 'translate(-50%, -100%)'
+                    }}
+                  >
+                    <div className="point-tooltip-header">
+                      <strong>{pointTooltip.title}</strong>
+                      <button 
+                        className="point-tooltip-close"
+                        onClick={() => setPointTooltip(null)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                    <div className="point-tooltip-body">
+                      <p className="point-tooltip-subject">{pointTooltip.subject}</p>
+                      <p className="point-tooltip-average">
+                        Média: <strong>{formatAverage(pointTooltip.average)}</strong>
+                      </p>
+                      <div className="point-tooltip-notes">
+                        <p>Notas:</p>
+                        <div className="point-tooltip-notes-list">
+                          {pointTooltip.notes.length > 0 ? (
+                            pointTooltip.notes.map((note, idx) => (
+                              <span key={idx} className="note-badge">{formatAverage(note)}</span>
+                            ))
+                          ) : (
+                            <span className="note-empty">Nenhuma nota</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }
