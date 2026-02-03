@@ -7,6 +7,7 @@ use App\Http\Requests\QuizAnswerRequest;
 use App\Http\Requests\QuizValidateRequest;
 use App\Http\Requests\QuizStoreRequest;
 use App\Models\Quiz;
+use App\Models\QuizAnswerLog;
 use App\Models\QuizValidation;
 use App\Models\UserScore;
 use Illuminate\Http\JsonResponse;
@@ -172,6 +173,16 @@ class QuizController extends Controller
         ]);
 
         if ($timedOut) {
+            QuizAnswerLog::create([
+                'user_id' => $userId,
+                'quiz_id' => $quiz->id,
+                'subject_id' => $quiz->subject_id,
+                'game_mode' => $gameMode,
+                'is_correct' => false,
+                'timed_out' => true,
+                'time_left' => $timeLeft,
+            ]);
+
             $quiz->increment('errors');
             $quiz->refresh();
             $quiz->recalculateDifficulty();
@@ -225,6 +236,16 @@ class QuizController extends Controller
                 $score->increment('individual_errors');
             }
         }
+
+        QuizAnswerLog::create([
+            'user_id' => $userId,
+            'quiz_id' => $quiz->id,
+            'subject_id' => $quiz->subject_id,
+            'game_mode' => $gameMode,
+            'is_correct' => $isCorrect,
+            'timed_out' => false,
+            'time_left' => $timeLeft,
+        ]);
 
         return response()->json([
             'message' => $isCorrect ? 'Resposta correta.' : 'Resposta incorreta.',

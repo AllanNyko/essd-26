@@ -11,6 +11,7 @@
 - Criar quizz: `POST /api/quizzes`
 - Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /api/quizzes/{id}/answer`
+- Estatísticas de quizz: `GET /api/quiz-stats?user_id={id}&subject_id={id?}&period_days={7|30|90}`
 - Iniciar sessão de jogo: `POST /api/game-sessions`
 - Encerrar sessão de jogo: `POST /api/game-sessions/close`
 - Expirar sessões de jogo: `POST /api/game-sessions/expire`

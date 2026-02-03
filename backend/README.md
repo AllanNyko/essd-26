@@ -12,6 +12,7 @@
 - Próximo quizz (validação): `GET /api/quizzes/next?user_id=1`
 - Próximo quizz (jogo): `GET /api/quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /api/quizzes/{id}/answer`
+- Estatísticas de quizz: `GET /api/quiz-stats?user_id={id}&subject_id={id?}&period_days={7|30|90}`
 - Iniciar sessão de jogo: `POST /api/game-sessions`
 - Encerrar sessão de jogo: `POST /api/game-sessions/close`
 - Expirar sessões de jogo: `POST /api/game-sessions/expire`
@@ -258,6 +259,31 @@ Retorna array de matérias com `id` e `name`.
 	"timed_out": false,
 	"game_mode": "individual",
 	"time_left": 12
+}
+```
+
+### Estatísticas de quizz
+Retorna total de acertos/erros e o detalhamento por matéria.
+
+Exemplo de resposta:
+```json
+{
+	"stats": {
+		"total_questions": 40,
+		"hits": 28,
+		"errors": 12,
+		"accuracy_percentage": 70
+	},
+	"subjects": [
+		{
+			"subject_id": 1,
+			"subject_name": "Matemática",
+			"total_questions": 12,
+			"hits": 9,
+			"errors": 3,
+			"accuracy_percentage": 75
+		}
+	]
 }
 ```
 
