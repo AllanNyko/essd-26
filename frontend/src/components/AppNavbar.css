@@ -27,4 +27,39 @@
   padding: 8px 12px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.icon-button:hover {
+  background: #cbd5e1;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .app-navbar {
+    padding: 10px 12px;
+    margin-bottom: 16px;
+  }
+  
+  .app-navbar-title {
+    font-size: 0.95rem;
+  }
+  
+  .app-navbar-meta {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-navbar-meta {
+    display: none; /* Oculta "ESSD" em telas muito pequenas */
+  }
+  
+  .app-navbar-title {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
 }

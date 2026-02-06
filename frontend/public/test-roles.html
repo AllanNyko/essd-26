@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Roles - ESSD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .user-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-student { background: #3b82f6; color: white; }
+        .btn-vendor { background: #10b981; color: white; }
+        .btn-admin { background: #ef4444; color: white; }
+        .btn-test { background: #8b5cf6; color: white; margin-top: 10px; }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+        .info { background: #dbeafe; color: #1e40af; }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f9fafb;
+            border-left: 4px solid #ddd;
+        }
+        .test-item.pass { border-color: #10b981; }
+        .test-item.fail { border-color: #ef4444; }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teste de Roles e Responsividade - ESSD</h1>
+    
+    <div class="test-section">
+        <h2>1. Testar Roles no localStorage</h2>
+        <div class="user-selector">
+            <button class="btn-student" onclick="setRole('student')">👨‍🎓 Student</button>
+            <button class="btn-vendor" onclick="setRole('vendor')">🏪 Vendor</button>
+            <button class="btn-admin" onclick="setRole('admin')">⚙️ Admin</button>
+        </div>
+        <div id="current-role" class="result info">Nenhum usuário selecionado</div>
+        <button class="btn-test" onclick="testRoles()">🔍 Testar Acesso às Rotas</button>
+        <div id="role-results"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Verificar localStorage Atual</h2>
+        <button class="btn-test" onclick="checkLocalStorage()">🔍 Verificar localStorage</button>
+        <div id="storage-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Testar Responsividade</h2>
+        <div class="info result">
+            <strong>Instruções:</strong><br>
+            1. Abra DevTools (F12) → Toggle Device Toolbar (Ctrl+Shift+M)<br>
+            2. Teste resoluções: 320px, 480px, 768px, 1024px<br>
+            3. Verifique se:<br>
+            &nbsp;&nbsp;• Sidebar ocupa largura correta (100vw em <480px, 85vw em 768px)<br>
+            &nbsp;&nbsp;• Texto da navbar se adapta<br>
+            &nbsp;&nbsp;• Layout não inverte<br>
+            &nbsp;&nbsp;• Padding reduz progressivamente
+        </div>
+        <button class="btn-test" onclick="showCurrentSize()">📐 Mostrar Tamanho Atual</button>
+        <div id="size-info"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Testar Navegação por Role</h2>
+        <p>Clique em um role acima e depois teste acessar essas URLs:</p>
+        <div id="nav-tests">
+            <div class="test-item">
+                <a href="http://localhost:3000/home" target="_blank">🏠 /home</a> - Todos devem acessar
+            </div>
+            <div class="test-item">
+                <a href="http://localhost:3000/vendor/products" target="_blank">📦 /vendor/products</a> - Só vendor/admin
+            </div>
+            <div class="test-item">
+                <a href="http://localhost:3000/vendor/orders" target="_blank">📋 /vendor/orders</a> - Só vendor/admin
+            </div>
+            <div class="test-item">
+                <a href="http://localhost:3000/admin/categories" target="_blank">⚙️ /admin/categories</a> - Só admin
+            </div>
+            <div class="test-item">
+                <a href="http://localhost:3000/admin/vendors" target="_blank">⚙️ /admin/vendors</a> - Só admin
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function setRole(role) {
+            const user = {
+                id: 1,
+                name: `Teste ${role.toUpperCase()}`,
+                email: `teste@${role}.com`,
+                role: role
+            };
+            
+            localStorage.setItem('essd_user', JSON.stringify(user));
+            localStorage.setItem('essd_token', 'test_token_123');
+            
+            document.getElementById('current-role').className = 'result success';
+            document.getElementById('current-role').innerHTML = `
+                ✅ Usuário configurado:<br>
+                Nome: ${user.name}<br>
+                Role: <strong>${role}</strong><br>
+                <small>Recarregue a página da aplicação para aplicar</small>
+            `;
+        }
+
+        function checkLocalStorage() {
+            const user = localStorage.getItem('essd_user');
+            const token = localStorage.getItem('essd_token');
+            
+            const info = document.getElementById('storage-info');
+            
+            if (!user) {
+                info.className = 'result error';
+                info.innerHTML = '❌ Nenhum usuário no localStorage';
+                return;
+            }
+            
+            const userData = JSON.parse(user);
+            info.className = 'result info';
+            info.innerHTML = `
+                <strong>📊 Dados no localStorage:</strong><br>
+                <pre>${JSON.stringify(userData, null, 2)}</pre>
+                <strong>Token:</strong> ${token ? '✅ Presente' : '❌ Ausente'}
+            `;
+        }
+
+        function testRoles() {
+            const user = localStorage.getItem('essd_user');
+            if (!user) {
+                document.getElementById('role-results').innerHTML = '<div class="result error">❌ Configure um role primeiro</div>';
+                return;
+            }
+
+            const userData = JSON.parse(user);
+            const role = userData.role;
+
+            const tests = [
+                { route: '/home', allowed: ['student', 'vendor', 'admin'], desc: 'Home' },
+                { route: '/vendor/products', allowed: ['vendor', 'admin'], desc: 'Meus Produtos' },
+                { route: '/vendor/orders', allowed: ['vendor', 'admin'], desc: 'Meus Pedidos' },
+                { route: '/admin/categories', allowed: ['admin'], desc: 'Gerenciar Categorias' },
+                { route: '/admin/vendors', allowed: ['admin'], desc: 'Gerenciar Vendedores' },
+            ];
+
+            let html = '<div style="margin-top: 15px;"><strong>Resultados do Teste:</strong></div>';
+            
+            tests.forEach(test => {
+                const hasAccess = test.allowed.includes(role);
+                const className = hasAccess ? 'pass' : 'fail';
+                const icon = hasAccess ? '✅' : '❌';
+                
+                html += `
+                    <div class="test-item ${className}">
+                        ${icon} <strong>${test.desc}</strong> (${test.route})<br>
+                        <small>Esperado: ${test.allowed.join(', ')} | Seu role: ${role}</small>
+                    </div>
+                `;
+            });
+
+            document.getElementById('role-results').innerHTML = html;
+        }
+
+        function showCurrentSize() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            let category = '';
+            if (width < 480) category = '📱 Mobile Small';
+            else if (width < 768) category = '📱 Mobile';
+            else if (width < 1024) category = '📱 Tablet';
+            else category = '💻 Desktop';
+            
+            document.getElementById('size-info').className = 'result info';
+            document.getElementById('size-info').innerHTML = `
+                <strong>Dimensões atuais:</strong><br>
+                Largura: ${width}px<br>
+                Altura: ${height}px<br>
+                Categoria: ${category}
+            `;
+        }
+
+        // Verificar ao carregar
+        window.addEventListener('load', () => {
+            checkLocalStorage();
+            showCurrentSize();
+        });
+    </script>
+</body>
+</html>

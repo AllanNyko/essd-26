@@ -90,7 +90,7 @@
   
   .order-summary {
     position: static;
-    order: -1;
+    /* Resumo aparece naturalmente após o formulário */
   }
   
   .form-row {

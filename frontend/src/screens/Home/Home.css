@@ -20,3 +20,31 @@
   font-size: 0.85rem;
   color: #64748b;
 }
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .home {
+    gap: 16px;
+  }
+  
+  .home-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .home-summary {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-summary {
+    grid-template-columns: 1fr 1fr; /* 2 colunas em mobile */
+    gap: 10px;
+  }
+  
+  .home-summary .label {
+    font-size: 0.8rem;
+  }
+}

@@ -38,6 +38,7 @@ import ManageProducts from './screens/ManageProducts/ManageProducts'
 import VendorOrders from './screens/VendorOrders/VendorOrders'
 import AdminCategories from './screens/AdminCategories/AdminCategories'
 import AdminVendors from './screens/AdminVendors/AdminVendors'
+import RoleRoute from './components/RoleRoute'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -177,12 +178,28 @@ function App() {
               
               {/* Vendor Routes */}
               <Route path="/vendor/register" element={<VendorRegistration />} />
-              <Route path="/vendor/products" element={<ManageProducts />} />
-              <Route path="/vendor/orders" element={<VendorOrders />} />
+              <Route path="/vendor/products" element={
+                <RoleRoute user={currentUser} requiredRole={['vendor', 'admin']}>
+                  <ManageProducts />
+                </RoleRoute>
+              } />
+              <Route path="/vendor/orders" element={
+                <RoleRoute user={currentUser} requiredRole={['vendor', 'admin']}>
+                  <VendorOrders />
+                </RoleRoute>
+              } />
               
               {/* Admin Routes */}
-              <Route path="/admin/categories" element={<AdminCategories />} />
-              <Route path="/admin/vendors" element={<AdminVendors />} />
+              <Route path="/admin/categories" element={
+                <RoleRoute user={currentUser} requiredRole="admin">
+                  <AdminCategories />
+                </RoleRoute>
+              } />
+              <Route path="/admin/vendors" element={
+                <RoleRoute user={currentUser} requiredRole="admin">
+                  <AdminVendors />
+                </RoleRoute>
+              } />
             </Route>
             <Route
               path="*"
