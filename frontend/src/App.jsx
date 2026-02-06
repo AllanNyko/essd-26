@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom'
 import './App.css'
+import { isTokenExpiringSoon, refreshToken } from './lib/api'
 import Login from './screens/Login/Login'
 import Signup from './screens/Signup/Signup'
 import ForgotPassword from './screens/ForgotPassword/ForgotPassword'
@@ -28,6 +29,15 @@ import GamesSurvivor from './screens/GamesSurvivor/GamesSurvivor'
 import GamesSurvivorPlay from './screens/GamesSurvivorPlay/GamesSurvivorPlay'
 import Stats from './screens/Stats/Stats'
 import Ranking from './screens/Ranking/Ranking'
+import Shop from './screens/Shop/Shop'
+import ProductDetail from './screens/ProductDetail/ProductDetail'
+import Cart from './screens/Cart/Cart'
+import Checkout from './screens/Checkout/Checkout'
+import VendorRegistration from './screens/VendorRegistration/VendorRegistration'
+import ManageProducts from './screens/ManageProducts/ManageProducts'
+import VendorOrders from './screens/VendorOrders/VendorOrders'
+import AdminCategories from './screens/AdminCategories/AdminCategories'
+import AdminVendors from './screens/AdminVendors/AdminVendors'
 
 const ProtectedRoute = ({ isAllowed, redirectTo, children }) => {
   if (!isAllowed) {
@@ -58,9 +68,11 @@ function App() {
     return saved ? JSON.parse(saved) : null
   })
 
-  const handleAuthenticated = (user) => {
+  const handleAuthenticated = (user, token) => {
     setCurrentUser(user)
     localStorage.setItem('essd_user', JSON.stringify(user))
+    localStorage.setItem('essd_token', token)
+    localStorage.setItem('essd_token_time', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString())
   }
 
   const handleUserUpdated = (user) => {
@@ -71,7 +83,31 @@ function App() {
   const handleLogout = () => {
     setCurrentUser(null)
     localStorage.removeItem('essd_user')
+    localStorage.removeItem('essd_token')
+    localStorage.removeItem('essd_token_time')
   }
+
+  // Verifica e renova o token automaticamente a cada 5 minutos
+  useEffect(() => {
+    if (!currentUser) return
+
+    const checkAndRefreshToken = async () => {
+      if (isTokenExpiringSoon()) {
+        const success = await refreshToken()
+        if (!success) {
+          handleLogout()
+        }
+      }
+    }
+
+    // Verifica imediatamente
+    checkAndRefreshToken()
+
+    // Configura verificação periódica
+    const interval = setInterval(checkAndRefreshToken, 5 * 60 * 1000) // 5 minutos
+
+    return () => clearInterval(interval)
+  }, [currentUser])
 
   return (
     <BrowserRouter>
@@ -132,6 +168,21 @@ function App() {
               <Route path="/games/individual/play" element={<GamesIndividualPlay />} />
               <Route path="/games/survivor" element={<GamesSurvivor />} />
               <Route path="/games/survivor/play" element={<GamesSurvivorPlay />} />
+              
+              {/* E-shop Routes */}
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/shop/products/:id" element={<ProductDetail />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              
+              {/* Vendor Routes */}
+              <Route path="/vendor/register" element={<VendorRegistration />} />
+              <Route path="/vendor/products" element={<ManageProducts />} />
+              <Route path="/vendor/orders" element={<VendorOrders />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin/categories" element={<AdminCategories />} />
+              <Route path="/admin/vendors" element={<AdminVendors />} />
             </Route>
             <Route
               path="*"

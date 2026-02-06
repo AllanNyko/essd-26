@@ -3,10 +3,11 @@
 ## Endpoints
 - Healthcheck: `GET /api/health` → `{ "status": "ok", "service": "backend" }`
 - Laravel up endpoint (framework): `GET /up`
-- Cadastro: `POST /api/auth/register`
-- Login: `POST /api/auth/login`
+- Cadastro: `POST /api/auth/register` (retorna token)
+- Login: `POST /api/auth/login` (retorna token)
+- Logout: `POST /api/auth/logout` (requer token - revoga todos os tokens do usuário)
 - Recuperar senha: `POST /api/auth/forgot-password`
-- Atualizar usuário: `PATCH /api/users/{id}` (auth planejada) — aceita `avatar_url` (data URL)
+- Atualizar usuário: `PATCH /api/users/{id}` — aceita `avatar_url` (data URL)
 - Upload de materiais: `POST /api/materials/upload`
 - Criar quizz: `POST /api/quizzes`
 - Próximo quizz (validação): `GET /api/quizzes/next?user_id=1`
@@ -16,31 +17,132 @@
 - Iniciar sessão de jogo: `POST /api/game-sessions`
 - Encerrar sessão de jogo: `POST /api/game-sessions/close`
 - Expirar sessões de jogo: `POST /api/game-sessions/expire`
-- Listar matérias: `GET /api/subjects` (use `only_with_quizzes=1` para jogos) (paginação planejada)
+- Listar matérias: `GET /api/subjects` (use `only_with_quizzes=1` para jogos)
 - Cadastrar matéria: `POST /api/subjects`
 - Detalhar matéria: `GET /api/subjects/{id}`
 - Atualizar matéria: `PATCH /api/subjects/{id}`
 - Excluir matéria: `DELETE /api/subjects/{id}`
-- Listar editais: `GET /api/notices` (paginação planejada)
+- Listar editais: `GET /api/notices`
 - Cadastrar edital: `POST /api/notices`
 - Detalhar edital: `GET /api/notices/{id}`
 - Atualizar edital: `PATCH /api/notices/{id}`
 - Excluir edital: `DELETE /api/notices/{id}`
-- Listar planos: `GET /api/plans` (paginação planejada)
+- Listar planos: `GET /api/plans`
 - Cadastrar plano: `POST /api/plans`
 - Detalhar plano: `GET /api/plans/{id}`
 - Atualizar plano: `PATCH /api/plans/{id}`
 - Excluir plano: `DELETE /api/plans/{id}`
-- Listar notas: `GET /api/notes?user_id={id}` (paginação planejada)
+- Listar notas: `GET /api/notes?user_id={id}`
 - Cadastrar nota: `POST /api/notes`
-- Consultar pontuação: `GET /api/scores?user_id={id}` (auth planejada)
-- Atualizar pontuação: `PATCH /api/scores` (auth planejada)
-- Ranking por média de notas: `GET /api/ranking` (opcional: `notice_id`)
+- Consultar pontuação: `GET /api/scores?user_id={id}`
+- Atualizar pontuação: `PATCH /api/scores`
+- Ranking por média de notas: `GET /api/ranking` (opcional: `notice_id`, `page`, `per_page`)
+
+### Rotas administrativas (requerem autenticação)
+- Listar todos os quizzes: `GET /api/admin/quizzes?page={n}&per_page={n}&needs_review={bool}&subject_id={id}`
+- Histórico de sessões: `GET /api/admin/game-sessions?page={n}&per_page={n}&user_id={id}&mode={mode}&status={status}`
+
+## Módulo E-Shop (Loja de Equipamentos)
+
+### Vendedores (Vendors)
+- Cadastro de vendedor: `POST /api/vendors` (requer autenticação)
+- Listar vendedores: `GET /api/vendors` (admin)
+- Aprovar vendedor: `PATCH /api/vendors/{id}/approve` (admin)
+- Rejeitar vendedor: `PATCH /api/vendors/{id}/reject` (admin)
+
+### Categorias
+- Listar categorias: `GET /api/categories?active_only={bool}`
+- Criar categoria: `POST /api/categories` (admin)
+- Detalhar categoria: `GET /api/categories/{id}`
+- Atualizar categoria: `PATCH /api/categories/{id}` (admin)
+- Excluir categoria: `DELETE /api/categories/{id}` (admin)
+
+### Produtos
+- Listar produtos: `GET /api/products?vendor_id={id}&category_id={id}&status={status}&search={query}&sort_by={field}&sort_order={asc|desc}`
+- Criar produto: `POST /api/products` (multipart/form-data, vendedor/admin)
+- Detalhar produto: `GET /api/products/{id}`
+- Atualizar produto: `PATCH /api/products/{id}` (vendedor/admin)
+- Excluir produto: `DELETE /api/products/{id}` (vendedor/admin)
+- Adicionar imagens: `POST /api/products/{id}/images` (vendedor/admin)
+- Remover imagem: `DELETE /api/products/{id}/images/{imageId}` (vendedor/admin)
+
+### Carrinho
+- Ver carrinho: `GET /api/cart` (requer autenticação)
+- Adicionar ao carrinho: `POST /api/cart` (body: `product_id`, `quantity`)
+- Atualizar quantidade: `PATCH /api/cart/{cartItemId}`
+- Remover do carrinho: `DELETE /api/cart/{cartItemId}`
+- Limpar carrinho: `DELETE /api/cart`
+
+### Pedidos (Orders)
+- Criar pedido: `POST /api/orders` (requer autenticação)
+- Listar pedidos do usuário: `GET /api/orders` (requer autenticação)
+- Listar pedidos do vendedor: `GET /api/orders/vendor` (vendedor/admin)
+- Atualizar status do pedido: `PATCH /api/orders/{id}/status` (vendedor/admin)
+
+### Avaliações
+- Criar avaliação: `POST /api/products/{id}/reviews` (requer compra verificada)
+- Excluir avaliação: `DELETE /api/reviews/{id}` (autor ou admin)
 
 ### Exclusão
 - Os endpoints `DELETE` removem o registro definitivamente.
 - Próximo quizz (validação): `GET /api/quizzes/next`
 - Validar quizz: `POST /api/quizzes/{id}/validate`
+
+## Autenticação com Sanctum
+
+Todas as rotas protegidas exigem um token Bearer no header:
+```
+Authorization: Bearer {token}
+```
+
+### Login/Registro
+Ao fazer login ou cadastro, a API retorna:
+```json
+{
+  "message": "Login efetuado com sucesso.",
+  "user": { ...dados do usuário... },
+  "token": "1|abc123..."
+}
+```
+
+### Token
+- **Expiração**: 24 horas após criação
+- **Revogação**: Ao fazer logout, todos os tokens do usuário são revogados
+- **Erro 401**: Token inválido ou expirado retorna `{"message": "Unauthenticated."}`
+
+### Rotas Públicas (não exigem token)
+- `GET /api/health`
+- `GET /api/ranking`
+- `GET /api/subjects`
+- `GET /api/notices`
+- `GET /api/plans`
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/forgot-password`
+
+### Rotas Protegidas (exigem token)
+Todas as outras rotas (criar, editar, deletar, upload, jogo, e-shop, etc.)
+
+## Roles e Permissões
+
+### Sistema de Roles
+- **student**: usuário padrão, acesso a jogos, materiais e loja
+- **vendor**: vendedor aprovado, pode gerenciar produtos e pedidos
+- **admin**: acesso total ao sistema
+
+### Controle de Acesso E-Shop
+- Qualquer usuário autenticado pode se cadastrar como vendedor
+- Admin aprova/rejeita cadastros de vendedores
+- Apenas vendedores aprovados podem criar produtos
+- Vendedores só gerenciam seus próprios produtos
+- Admin pode gerenciar todos os produtos
+
+## Validação em Português
+
+Todas as mensagens de validação foram traduzidas para pt_BR:
+- Configuração: `config/app.php` → `locale => 'pt_BR'`
+- Traduções: `lang/pt_BR/validation.php`
+- Exemplos: "O campo descrição deve ter pelo menos 10 caracteres", "O preço é obrigatório"
 
 ## Padrão de resposta da API
 ### Sucesso
@@ -103,11 +205,6 @@
 	}
 }
 ```
-
-## Autenticação e paginação (planejamento)
-- Autenticação robusta será aplicada via tokens (Sanctum ou JWT).
-- Endpoints marcados como `auth planejada` passarão a exigir `Authorization: Bearer <token>`.
-- Endpoints marcados como `paginação planejada` retornarão `meta` com `page`, `per_page`, `total` e `last_page`.
 
 ## Como testar
 1) Suba os containers: `docker compose up -d`
@@ -290,6 +387,36 @@ Exemplo de resposta:
 ### Ranking
 Retorna a média das notas por usuário, ordenada de forma decrescente.
 
+Parâmetros de query:
+- `notice_id` (opcional): filtrar por edital específico
+- `page` (opcional): página atual (padrão: 1)
+- `per_page` (opcional): itens por página (padrão: 15)
+
+Exemplo de resposta:
+```json
+{
+	"ranking": [
+		{
+			"id": 4,
+			"name": "Usuario 01",
+			"email": "user01@essd.local",
+			"average_score": 7.5,
+			"total_score": 22.5,
+			"total_notes": 3
+		}
+	],
+	"meta": {
+		"current_page": 1,
+		"per_page": 15,
+		"total": 50,
+		"last_page": 4
+	}
+}
+```
+
+## Ranking por média de notas
+Retorna a média das notas por usuário, ordenada de forma decrescente.
+
 Exemplo de resposta:
 ```json
 {
@@ -306,7 +433,7 @@ Exemplo de resposta:
 }
 ```
 
-## Colunas de desempenho
+## Colunas de desempenho dos quizzes
 - `hits`: número de acertos acumulados.
 - `errors`: número de erros acumulados.
 - `invalidate_count`: número de invalidações acumuladas.
@@ -326,7 +453,13 @@ Exemplo de resposta:
 - Fechamento/expiração de sessão é idempotente (penaliza somente uma vez).
 - O endpoint de jogo aceita `subject_ids` e `exclude_ids` para filtrar e evitar repetição.
 
-## Notas
+## Notas técnicas
 - Banco: MariaDB (serviço `mariadb` no docker-compose), credenciais já configuradas em `.env`.
 - URL pública: http://localhost:8080
-- Autenticação atual retorna o usuário em JSON (sem token). Proteções adicionais podem ser adicionadas com Sanctum/JWT.
+- Autenticação: Laravel Sanctum com tokens Bearer (expiração de 24 horas).
+- Paginação: implementada para ranking, listagem de quizzes e histórico de sessões.
+
+## Melhorias futuras
+- Criar testes automatizados para fluxos críticos (autenticação, validação de quizzes, sessões de jogo).
+- Implementar refresh tokens para renovação automática antes da expiração.
+- Adicionar rate limiting para proteção contra abuso de API.

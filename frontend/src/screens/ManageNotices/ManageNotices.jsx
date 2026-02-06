@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './ManageNotices.css'
 
 const ManageNotices = () => {
@@ -16,7 +16,7 @@ const ManageNotices = () => {
   const loadNotices = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/notices`, {
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
       const data = await parseJson(response)
 
@@ -46,7 +46,7 @@ const ManageNotices = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/notices`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: trimmed, observation: trimmedObservation }),
       })
 
@@ -71,7 +71,7 @@ const ManageNotices = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/notices/${modal.item.id}`, {
         method: 'DELETE',
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
 
       const data = await parseJson(response)

@@ -106,7 +106,7 @@ const Signup = ({ onAuthenticated }) => {
         throw new Error(data?.message || 'Não foi possível cadastrar.')
       }
 
-      onAuthenticated?.(data.user)
+      onAuthenticated?.(data.user, data.token)
       navigate('/home')
       setStatus({ loading: false, error: '', success: data.message || 'Cadastro realizado.' })
     } catch (error) {

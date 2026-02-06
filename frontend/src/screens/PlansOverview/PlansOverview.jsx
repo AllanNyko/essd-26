@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './PlansOverview.css'
 
 const PlansOverview = () => {
@@ -21,7 +21,7 @@ const PlansOverview = () => {
     const loadPlans = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/plans`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 

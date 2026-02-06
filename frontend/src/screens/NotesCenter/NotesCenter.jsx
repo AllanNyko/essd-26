@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './NotesCenter.css'
 
 const NotesCenter = () => {
@@ -23,7 +23,7 @@ const NotesCenter = () => {
     const loadSubjects = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/subjects`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -49,7 +49,7 @@ const NotesCenter = () => {
 
       try {
         const response = await fetch(`${API_BASE_URL}/notes?user_id=${userId}`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -93,7 +93,7 @@ const NotesCenter = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/notes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           user_id: Number(userId),
           notice_id: currentUser?.notice_id ?? null,
@@ -114,7 +114,7 @@ const NotesCenter = () => {
       setSearch('')
 
       const storedNotesResponse = await fetch(`${API_BASE_URL}/notes?user_id=${userId}`, {
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
       const storedNotesData = await parseJson(storedNotesResponse)
       if (storedNotesResponse.ok) {

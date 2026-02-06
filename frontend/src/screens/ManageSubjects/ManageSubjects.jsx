@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './ManageSubjects.css'
 
 const ManageSubjects = () => {
@@ -15,7 +15,7 @@ const ManageSubjects = () => {
   const loadSubjects = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/subjects`, {
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
       const data = await parseJson(response)
 
@@ -44,7 +44,7 @@ const ManageSubjects = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/subjects`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: trimmed }),
       })
 
@@ -68,7 +68,7 @@ const ManageSubjects = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/subjects/${modal.item.id}`, {
         method: 'DELETE',
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
 
       const data = await parseJson(response)

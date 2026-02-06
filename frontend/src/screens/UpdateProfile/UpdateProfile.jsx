@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './UpdateProfile.css'
 
 const UpdateProfile = ({ user, onUserUpdated }) => {
@@ -36,7 +36,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     const loadPlans = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/plans`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -53,7 +53,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     const loadNotices = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/notices`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -121,7 +121,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
     try {
       const response = await fetch(`${API_BASE_URL}/users/${form.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload),
       })
 
@@ -184,7 +184,7 @@ const UpdateProfile = ({ user, onUserUpdated }) => {
       try {
         const response = await fetch(`${API_BASE_URL}/users/${user.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
           body: JSON.stringify({ avatar_url: preview }),
         })
 

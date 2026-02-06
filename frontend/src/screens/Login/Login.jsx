@@ -33,7 +33,7 @@ const Login = ({ onAuthenticated }) => {
         throw new Error(data?.message || 'Não foi possível autenticar.')
       }
 
-      onAuthenticated?.(data.user)
+      onAuthenticated?.(data.user, data.token)
       navigate('/home')
       setStatus({ loading: false, error: '', success: data.message || 'Login efetuado.' })
     } catch (error) {

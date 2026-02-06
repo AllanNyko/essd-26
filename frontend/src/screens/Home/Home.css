@@ -1,12 +1,11 @@
 .home {
-  .home {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    position: relative;
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+}
 
-  .home-content {
+.home-content {
   display: flex;
 }
 

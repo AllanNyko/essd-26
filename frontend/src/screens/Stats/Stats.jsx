@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './Stats.css'
 
 const formatAverage = (value) => (
@@ -41,9 +41,9 @@ const Stats = () => {
 
       try {
         const [subjectsResponse, notesResponse, rankingResponse] = await Promise.all([
-          fetch(`${API_BASE_URL}/subjects`, { headers: { Accept: 'application/json' } }),
-          fetch(`${API_BASE_URL}/notes?user_id=${userId}`, { headers: { Accept: 'application/json' } }),
-          fetch(`${API_BASE_URL}/ranking`, { headers: { Accept: 'application/json' } }),
+          fetch(`${API_BASE_URL}/subjects`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/notes?user_id=${userId}`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/ranking`, { headers: getAuthHeaders() }),
         ])
 
         const subjectsData = await parseJson(subjectsResponse)
@@ -86,7 +86,7 @@ const Stats = () => {
 
       try {
         const response = await fetch(`${API_BASE_URL}/notes?user_id=${comparisonUserId}`, {
-          headers: { Accept: 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 

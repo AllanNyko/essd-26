@@ -31,9 +31,12 @@ class AuthController extends Controller
             'user_id' => $user->id,
         ]);
 
+        $token = $user->createToken('auth_token', ['*'], now()->addHours(24))->plainTextToken;
+
         return response()->json([
             'message' => 'Cadastro realizado com sucesso.',
             'user' => $user,
+            'token' => $token,
         ], 201);
     }
 
@@ -47,9 +50,15 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Revogar tokens antigos do usuário
+        $user->tokens()->delete();
+
+        $token = $user->createToken('auth_token', ['*'], now()->addHours(24))->plainTextToken;
+
         return response()->json([
             'message' => 'Login efetuado com sucesso.',
             'user' => $user,
+            'token' => $token,
         ]);
     }
 

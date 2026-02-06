@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './ManagePlans.css'
 
 const ManagePlans = () => {
@@ -23,7 +23,7 @@ const ManagePlans = () => {
   const loadPlans = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/plans`, {
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
       const data = await parseJson(response)
 
@@ -52,7 +52,7 @@ const ManagePlans = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/plans`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           name: trimmed,
           price: Number(price),
@@ -84,7 +84,7 @@ const ManagePlans = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/plans/${modal.item.id}`, {
         method: 'DELETE',
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
 
       const data = await parseJson(response)

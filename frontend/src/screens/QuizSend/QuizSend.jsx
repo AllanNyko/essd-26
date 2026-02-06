@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './QuizSend.css'
 
 const QuizSend = () => {
@@ -18,7 +18,7 @@ const QuizSend = () => {
     const loadSubjects = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/subjects`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -69,7 +69,7 @@ const QuizSend = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/quizzes`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           user_id: Number(currentUser.id),
           subject_id: Number(subjectId),

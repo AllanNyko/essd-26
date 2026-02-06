@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import FormCard from '../../components/FormCard'
 import Input from '../../components/Input'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './ManageSubjectEdit.css'
 
 const ManageSubjectEdit = () => {
@@ -17,7 +17,7 @@ const ManageSubjectEdit = () => {
     const loadSubject = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/subjects/${id}`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -53,7 +53,7 @@ const ManageSubjectEdit = () => {
     try {
       const response = await fetch(`${API_BASE_URL}/subjects/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ name: trimmed }),
       })
 

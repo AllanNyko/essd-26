@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './Ranking.css'
 
 const Ranking = () => {
@@ -132,7 +132,7 @@ const Ranking = () => {
       setLoading(true)
       try {
         const response = await fetch(`${API_BASE_URL}/ranking`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 

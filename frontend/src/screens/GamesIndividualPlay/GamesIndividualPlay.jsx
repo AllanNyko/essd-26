@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './GamesIndividualPlay.css'
 
 const GamesIndividualPlay = () => {
@@ -34,7 +34,7 @@ const GamesIndividualPlay = () => {
     const query = params.toString() ? `?${params.toString()}` : ''
 
     const response = await fetch(`${API_BASE_URL}/quizzes/play/next${query}`, {
-      headers: { 'Accept': 'application/json' },
+      headers: getAuthHeaders(),
     })
     const data = await parseJson(response)
     return data?.quiz || null
@@ -74,7 +74,7 @@ const GamesIndividualPlay = () => {
 
     await fetch(`${API_BASE_URL}/game-sessions`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         user_id: Number(userId),
         quiz_id: nextQuiz.id,
@@ -101,7 +101,7 @@ const GamesIndividualPlay = () => {
 
     await fetch(`${API_BASE_URL}/game-sessions/close`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(payload),
       keepalive: true,
     })
@@ -123,7 +123,7 @@ const GamesIndividualPlay = () => {
     const loadSubjects = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/subjects`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -158,7 +158,7 @@ const GamesIndividualPlay = () => {
 
       try {
         const response = await fetch(`${API_BASE_URL}/scores?user_id=${userId}`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
@@ -255,7 +255,7 @@ const GamesIndividualPlay = () => {
 
     await fetch(`${API_BASE_URL}/quizzes/${quiz.id}/answer`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         user_id: Number(userId),
         selected_option: selected || null,

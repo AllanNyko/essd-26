@@ -13,6 +13,7 @@ class RankingController extends Controller
     public function index(Request $request): JsonResponse
     {
         $noticeId = $request->query('notice_id');
+        $perPage = (int) $request->query('per_page', 15);
 
         $query = User::query()
             ->join('notes', 'notes.user_id', '=', 'users.id')
@@ -34,8 +35,16 @@ class RankingController extends Controller
             $query->where('notes.notice_id', $noticeId);
         }
 
+        $paginated = $query->paginate($perPage);
+
         return response()->json([
-            'ranking' => $query->get(),
+            'ranking' => $paginated->items(),
+            'meta' => [
+                'current_page' => $paginated->currentPage(),
+                'per_page' => $paginated->perPage(),
+                'total' => $paginated->total(),
+                'last_page' => $paginated->lastPage(),
+            ],
         ]);
     }
 }

@@ -12,7 +12,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->api(prepend: [
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+        
+        $middleware->alias([
+            'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

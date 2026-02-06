@@ -21,10 +21,16 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - Frontend: respeitar a responsividade sempre.
 - Backend: usar validação via Form Requests e Eloquent para evitar SQL injection.
 
-## Melhorias estruturais (planejamento)
-- Autenticação robusta: adoção de tokens (Sanctum ou JWT) com expiração e proteção de rotas.
-- Paginação padronizada: parâmetros `page` e `per_page` em listagens e retorno de metadados.
+## Estado atual do projeto
+- Autenticação: implementada com Laravel Sanctum - tokens JWT com expiração de 24 horas.
+- Paginação: implementada para ranking, listagem administrativa de quizzes e histórico de sessões.
+- E-Shop: módulo completo para venda de equipamentos de formação PM-SP (parceiros/vendedores).
+- Testes automatizados: não implementados.
+
+## Próximas melhorias planejadas
 - Testes automatizados: cobertura mínima de fluxos críticos (auth, quizzes e sessões de jogo).
+- Cron job: automação para verificar sessões de jogo expiradas e computar erros/pontuação.
+- Refresh tokens: implementar renovação automática de tokens antes da expiração.
 
 ## Padrões de API
 - Respostas e erros padronizados no backend: ver [backend/README.md](backend/README.md).
@@ -52,8 +58,18 @@ Este documento centraliza as regras e orientações gerais para o projeto. **Ant
 - 2026-01-27: Quizzes agora armazenam porcentagem de acertos e dificuldade calculada.
 - 2026-01-27: Pontuação por modo (individual/survivor) e bônus por tempo em quizzes.
 - 2026-01-27: Sessões de jogo registradas para penalizar abandonos/refresh.
-- 2026-01-27: Planejamento de autenticação robusta (tokens), paginação e testes automatizados.
+- 2026-01-27: Planejamento de autenticação robusta (tokens), paginação e testes automatizados documentado.
 - 2026-01-27: Padronização de respostas e erros da API documentada no backend.
 - 2026-01-27: Exemplos de respostas de sucesso/erro adicionados na documentação do frontend.
 - 2026-01-27: Avatar do usuário com upload imediato e persistência via `avatar_url`.
 - 2026-01-27: Coluna `avatar_url` ajustada para `LONGTEXT` para suportar data URL.
+- 2026-02-04: Autenticação robusta implementada com Laravel Sanctum - tokens com expiração de 24h.
+- 2026-02-04: Todas as rotas sensíveis protegidas com middleware `auth:sanctum`.
+- 2026-02-04: Frontend atualizado para armazenar e enviar tokens Bearer em todas as requisições.
+- 2026-02-04: Paginação implementada para ranking, listagem administrativa de quizzes e histórico de sessões.
+- 2026-02-04: Novos endpoints: `/api/admin/quizzes` e `/api/admin/game-sessions` com paginação.
+- 2026-02-06: Módulo E-Shop implementado com sistema completo de vendas para parceiros.
+- 2026-02-06: Sistema de roles (student/vendor/admin) para controle de acesso.
+- 2026-02-06: Fluxo completo: cadastro de vendedores, aprovação, gestão de produtos, carrinho e pedidos.
+- 2026-02-06: Máscaras de preço em formato brasileiro (R$ X.XXX,XX) e validações em português.
+- 2026-02-06: Modal de feedback com UI/UX aprimorada (fundo sólido, botão OK, auto-limpeza de formulário).

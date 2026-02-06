@@ -28,6 +28,17 @@
 - Modo Survivor (`/games/survivor`)
 - Jogo survivor (`/games/survivor/play`)
 
+### E-Shop (Loja de Equipamentos)
+- Loja (`/shop`) — catálogo de produtos com filtros
+- Detalhes do produto (`/shop/products/:id`)
+- Carrinho (`/cart`)
+- Checkout (`/checkout`)
+- Cadastro de vendedor (`/vendor/registration`)
+- Gerenciar produtos (vendedor) (`/manage-products`)
+- Pedidos do vendedor (`/vendor/orders`)
+- Gerenciar categorias (admin) (`/admin/categories`)
+- Gerenciar vendedores (admin) (`/admin/vendors`)
+
 ## Stack e dependências
 - Vite + React 19
 - React Router (`react-router-dom`) para navegação entre telas
@@ -39,19 +50,19 @@ Endpoints usados:
 - Cadastro: `POST /auth/register`
 - Login: `POST /auth/login`
 - Recuperar senha: `POST /auth/forgot-password`
-- Atualizar usuário: `PATCH /users/{id}` (auth planejada)
+- Atualizar usuário: `PATCH /users/{id}`
 - Upload de materiais: `POST /materials/upload` (multipart/form-data)
-- Listar matérias: `GET /subjects` (use `only_with_quizzes=1` para jogos) (paginação planejada)
+- Listar matérias: `GET /subjects` (use `only_with_quizzes=1` para jogos)
 - Cadastrar matéria: `POST /subjects`
 - Detalhar matéria: `GET /subjects/{id}`
 - Atualizar matéria: `PATCH /subjects/{id}`
 - Excluir matéria: `DELETE /subjects/{id}`
-- Listar editais: `GET /notices` (retorna `name` e `observation`) (paginação planejada)
+- Listar editais: `GET /notices` (retorna `name` e `observation`)
 - Cadastrar edital: `POST /notices`
 - Detalhar edital: `GET /notices/{id}`
 - Atualizar edital: `PATCH /notices/{id}`
 - Excluir edital: `DELETE /notices/{id}`
-- Listar planos: `GET /plans` (paginação planejada)
+- Listar planos: `GET /plans`
 - Cadastrar plano: `POST /plans`
 - Detalhar plano: `GET /plans/{id}`
 - Atualizar plano: `PATCH /plans/{id}`
@@ -59,14 +70,28 @@ Endpoints usados:
 - Criar quizz: `POST /quizzes`
 - Próximo quizz (validação): `GET /quizzes/next?user_id={id}`
 - Validar quizz: `POST /quizzes/{id}/validate`
-- Listar notas: `GET /notes?user_id={id}` (paginação planejada)
+- Listar notas: `GET /notes?user_id={id}`
 - Cadastrar nota: `POST /notes`
-- Consultar pontuação: `GET /scores?user_id={id}` (auth planejada)
-- Atualizar pontuação: `PATCH /scores` (auth planejada)
+- Consultar pontuação: `GET /scores?user_id={id}`
+- Atualizar pontuação: `PATCH /scores`
 - Próximo quizz (jogo): `GET /quizzes/play/next?subject_ids=1,2&exclude_ids=10,11`
 - Responder quizz (jogo): `POST /quizzes/{id}/answer`
 - Iniciar sessão de jogo: `POST /game-sessions`
 - Encerrar sessão de jogo: `POST /game-sessions/close`
+
+### Endpoints E-Shop
+- Listar produtos: `GET /products?category_id={id}&search={query}&sort_by={field}&sort_order={asc|desc}`
+- Criar produto: `POST /products` (multipart/form-data)
+- Detalhar produto: `GET /products/{id}`
+- Listar categorias: `GET /categories?active_only=1`
+- Ver carrinho: `GET /cart`
+- Adicionar ao carrinho: `POST /cart`
+- Atualizar carrinho: `PATCH /cart/{id}`
+- Remover do carrinho: `DELETE /cart/{id}`
+- Criar pedido: `POST /orders`
+- Listar pedidos: `GET /orders`
+- Pedidos do vendedor: `GET /orders/vendor`
+- Cadastro de vendedor: `POST /vendors`
 
 ### Padrão de resposta da API
 - Sucesso: `message`, `data` e `meta` (quando paginado).
@@ -149,6 +174,48 @@ Exemplo de erro:
 ### Upload de materiais
 - Campos: `user_id`, `subject_id`, `type`, `file`
 - `type`: `apostila` | `resumo` | `mapa-mental`
+
+## Componentes Reutilizáveis
+
+### Formulários
+- `Input.jsx` — campo de texto genérico
+- `Select.jsx` — select com opções
+- `Textarea.jsx` — área de texto
+- `FormCard.jsx` — card com título, descrição e formulário
+- `ImageUploader.jsx` — upload de múltiplas imagens com preview (máx. 5)
+
+### UI
+- `Modal.jsx` — modal com overlay escuro, título, corpo, botão OK e auto-limpeza
+- `ProductCard.jsx` — card de produto com imagem, nome, preço e categoria
+- `Status.jsx` — mensagens de erro/sucesso
+- `SidebarDrawer.jsx` — menu lateral com navegação por role
+- `AppNavbar.jsx` — barra de navegação superior
+
+### Máscaras e Formatação
+- Preço em formato brasileiro: `R$ X.XXX,XX` usando `toLocaleString('pt-BR')`
+- Conversão de preço no submit: remove pontos, troca vírgula por ponto
+- Exemplo: input `19990` → display `199,90` → submit `199.90`
+
+## Funcionalidades E-Shop
+
+### Roles e Navegação
+- **Student**: acesso à loja, carrinho e checkout
+- **Vendor**: área de gestão de produtos e pedidos + acesso à loja
+- **Admin**: gerenciar categorias, vendedores + todas as funcionalidades
+
+### Fluxo de Vendedor
+1. Usuário se cadastra como vendedor (`/vendor/registration`)
+2. Admin aprova o cadastro (`/admin/vendors`)
+3. Vendedor acessa "Meus Produtos" (`/manage-products`)
+4. Cadastra produtos com imagens, preço, estoque
+5. Acompanha pedidos em "Meus Pedidos" (`/vendor/orders`)
+
+### Fluxo de Compra
+1. Cliente navega na loja (`/shop`) com filtros e busca
+2. Visualiza detalhes do produto (`/shop/products/:id`)
+3. Adiciona ao carrinho (`/cart`)
+4. Finaliza compra no checkout (`/checkout`)
+5. Pedido é enviado ao vendedor
 
 ### Criar quizz
 - Campos: `user_id`, `subject_id`, `question`, `option_one`, `option_two`, `option_three`, `option_four`

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './QuizValidate.css'
 
 const QuizValidate = () => {
@@ -21,7 +21,7 @@ const QuizValidate = () => {
     setLoading(true)
     try {
       const response = await fetch(`${API_BASE_URL}/quizzes/next?user_id=${userId}`, {
-        headers: { 'Accept': 'application/json' },
+        headers: getAuthHeaders(),
       })
       const data = await parseJson(response)
       setQuiz(data?.quiz || null)
@@ -47,7 +47,7 @@ const QuizValidate = () => {
 
     await fetch(`${API_BASE_URL}/quizzes/${quiz.id}/validate`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ action, user_id: userId }),
     })
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { API_BASE_URL, parseJson } from '../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders, getAuthHeadersMultipart } from '../lib/api'
 import './MaterialUploadForm.css'
 
 const MaterialUploadForm = ({ materialType }) => {
@@ -12,7 +12,7 @@ const MaterialUploadForm = ({ materialType }) => {
       const loadSubjects = async () => {
         try {
           const response = await fetch(`${API_BASE_URL}/subjects`, {
-            headers: { 'Accept': 'application/json' },
+            headers: getAuthHeaders(),
           })
           const data = await parseJson(response)
 
@@ -91,7 +91,11 @@ const MaterialUploadForm = ({ materialType }) => {
       const response = await new Promise((resolve, reject) => {
         const request = new XMLHttpRequest()
         request.open('POST', `${API_BASE_URL}/materials/upload`, true)
-        request.setRequestHeader('Accept', 'application/json')
+        
+        const headers = getAuthHeadersMultipart()
+        Object.entries(headers).forEach(([key, value]) => {
+          request.setRequestHeader(key, value)
+        })
 
         request.upload.onprogress = (event) => {
           if (event.lengthComputable) {

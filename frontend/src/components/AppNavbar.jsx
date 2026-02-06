@@ -17,6 +17,7 @@ const AppNavbar = ({ user, onLogout }) => {
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
         onLogout={onLogout}
+        user={user}
       />
     </header>
   )

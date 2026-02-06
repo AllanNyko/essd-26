@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { API_BASE_URL, parseJson } from '../../lib/api'
+import { API_BASE_URL, parseJson, getAuthHeaders } from '../../lib/api'
 import './GamesIndividual.css'
 
 const GamesIndividual = () => {
@@ -16,7 +16,7 @@ const GamesIndividual = () => {
     const loadSubjects = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/subjects?only_with_quizzes=1`, {
-          headers: { 'Accept': 'application/json' },
+          headers: getAuthHeaders(),
         })
         const data = await parseJson(response)
 
